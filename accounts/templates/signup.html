@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<h1>Register page</h1>
+
+<form method="POST" action="">
+    {% csrf_token %}
+    <p>
+        {{ form.username.label }}
+        {{ form.username }}
+    </p>
+    <p>
+        {{ form.email.label }}
+        {{ form.email }}
+    </p>
+    <p>
+        {{ form.password1.label }}
+        {{ form.password1 }}
+    </p>
+    <p>
+        {{ form.password2.label }}
+        {{ form.password2 }}
+    </p>
+    <p>
+        {{ form.errors }}
+    </p>
+
+    {% for message in messages %}
+    <p>{{ message }}</p>
+    {% endfor %}
+
+    <input type="submit" name="Sign Up">
+</form>
+
+<p>Already registered? <a href="{% url 'login' %}">Log in</a></p>
+
+{% include 'menu.html' %}
+
+</body>
+</html>

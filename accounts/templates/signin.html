@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<h1>Login page</h1>
+
+<form method="POST" action="">
+    {% csrf_token %}
+
+    <p>
+        Username
+        <input type="text" name="username">
+    </p>
+
+    <p>
+        Password
+        <input type="password" name="password">
+    </p>
+
+    {% for message in messages %}
+    <p>{{ message }}</p>
+    {% endfor %}
+
+    <input type="submit" name="Sign Up">
+</form>
+
+<p>Not registered yet? <a href="{% url 'register' %}">Sign up</a></p>
+
+{% include 'menu.html' %}
+
+</body>
+</html>
