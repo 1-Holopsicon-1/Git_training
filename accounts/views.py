@@ -1,19 +1,22 @@
 from random import randint
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import EmailMessage
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.template.defaulttags import url
 from django.urls import reverse
+from django.utils import timezone
 
 from accounts.account_restoration_email import get_email_body
 from accounts.forms import RegistrationForm
+from accounts.models import UserProperties
 from surveyanywhere.settings import EMAIL_HOST_USER
 
-
+#<editor-fold desc="MAIN PART">
 def register(request):
     if request.user.is_authenticated:
         return redirect(reverse('main'))
@@ -32,6 +35,8 @@ def register(request):
             if user is None:
                 form.save()
                 username = form.cleaned_data.get('username')
+                userProperties = UserProperties(user=User.objects.get(username=username), email_key=0, password_restore_called=timezone.now())
+                userProperties.save()
                 messages.success(request, f'Account with username "{username}" created.')
             else:
                 messages.error(request, f'Account with email "{email}" already exists.')
@@ -60,6 +65,7 @@ def authentication(request):
 def deauthentication(request):
     logout(request)
     return redirect(reverse('main'))
+#</editor-fold>
 
 def restore_access(request):
     if request.user.is_authenticated:
@@ -83,7 +89,11 @@ def restore_access(request):
                 [email],
             )
             email.send()
-            return redirect(reverse('user_restore_confirm') + f'?key={hex(number)[2:]}&user={username}')
+            userParams = UserProperties.objects.get(user=user)
+            userParams.email_key = number
+            userParams.password_restore_called = timezone.now()
+            userParams.save()
+            return redirect(reverse('user_restore_confirm') + f'?user={username}')
         else:
             messages.info(request, 'Username or email incorrect')
 
@@ -91,8 +101,22 @@ def restore_access(request):
     return render(request, 'restore.html', context)
 
 def restore_access_check(request):
-    value = int('0x' + request.GET.get('key', '0'), 16)
+    if request.user.is_authenticated:
+        return redirect(reverse('main'))
+
     username = request.GET.get('user', '')
+    try:
+        user = User.objects.get(username=username)
+    except ObjectDoesNotExist:
+        return redirect(reverse('main'))
+
+    userProp = UserProperties.objects.get(user=user)
+    value = userProp.email_key
+    if value == 0 or (timezone.now() - userProp.password_restore_called).total_seconds() > 1800:
+        userProp.email_key = 0
+        userProp.save()
+        return redirect(reverse('main'))
+
     if request.method == "POST":
         digit = request.POST.get('Digit1')
         digit += request.POST.get('Digit2')
@@ -109,15 +133,29 @@ def restore_access_check(request):
     return render(request, 'restore_check.html', context)
 
 def restore_access_main(request):
+    if request.user.is_authenticated:
+        return redirect(reverse('main'))
+
     username = request.GET.get('user', None)
     try:
         user = User.objects.get(username=username)
     except ObjectDoesNotExist:
         return redirect(reverse('main'))
+    userProp = UserProperties.objects.get(user=user)
+    if userProp.email_key == 0 or (timezone.now() - userProp.password_restore_called).total_seconds() > 1800:
+        userProp.email_key = 0
+        userProp.save()
+        return redirect(reverse('main'))
+
+    context = {}
     form = SetPasswordForm(user)
     if request.method == 'POST':
+        form = SetPasswordForm(user, request.POST)
         if form.is_valid():
-            form.save()
-            return redirect(reverse('user_login'))
-    context = {}
+            new_password = request.POST['new_password1']
+            user.set_password(new_password)
+            user.save()
+            messages.info(request, 'Password was updated')
+            return HttpResponseRedirect(reverse('user_login'))
+    context['form'] = form
     return render(request, 'restore_main.html', context)

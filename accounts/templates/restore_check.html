@@ -15,13 +15,14 @@
                     <h3>Account access restoration</h3>
 
                     <form method="POST" action="">
+                        {% csrf_token %}
                         <p>
-                            <input type="text" id="Digit1" maxlength="1" oninput="checkInput(this)">
-                            <input type="text" id="Digit2" maxlength="1" oninput="checkInput(this)">
-                            <input type="text" id="Digit3" maxlength="1" oninput="checkInput(this)">
-                            <input type="text" id="Digit4" maxlength="1" oninput="checkInput(this)">
-                            <input type="text" id="Digit5" maxlength="1" oninput="checkInput(this)">
-                            <input type="text" id="Digit6" maxlength="1" oninput="checkInput(this)">
+                            <input type="text" id="Digit1" name="Digit1" maxlength="1" oninput="checkInput(this)">
+                            <input type="text" id="Digit2" name="Digit2" maxlength="1" oninput="checkInput(this)">
+                            <input type="text" id="Digit3" name="Digit3" maxlength="1" oninput="checkInput(this)">
+                            <input type="text" id="Digit4" name="Digit4" maxlength="1" oninput="checkInput(this)">
+                            <input type="text" id="Digit5" name="Digit5" maxlength="1" oninput="checkInput(this)">
+                            <input type="text" id="Digit6" name="Digit6" maxlength="1" oninput="checkInput(this)">
                         </p>
                         {% for message in messages %}
                         <p>{{ message }}</p>

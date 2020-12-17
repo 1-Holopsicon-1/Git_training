@@ -5,7 +5,7 @@ If you see this message it means that you or somebody else tried to restore pass
 If you want to change your password, type in the password reset confirmation tab these numbers:
 {code}
 
-This letter was generated automatically. Please, consider not replying.
+This letter was generated automatically. Please, do not reply on it.
 
 With best wishes,
 Support Team of SurveyAnyWhere'''
