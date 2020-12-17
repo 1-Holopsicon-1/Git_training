@@ -11,7 +11,7 @@
 <p>Hello, {{ request.user }}</p>
 
 {% if request.user.is_authenticated %}
-    <button><a href="{% url 'logout' %}">Log out</a></button>
+    <button><a href="{% url 'user_logout' %}">Log out</a></button>
 {% endif %}
 
 {% include 'menu.html' %}

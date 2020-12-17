@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}"/>
@@ -10,42 +10,36 @@
 </head>
 <body>
 
-
     <section class="container-fluid bg">
         <section class="row justify-content-center">
             <section class="col-3">
                 <section class="form-container">
-                    <h3>Login</h3>
-
+                    <h3>Restore password</h3>
                     <form method="POST" action="">
                         {% csrf_token %}
-
+                    
                         <p>
                             Username
                             <input type="text" name="username">
                         </p>
-
+                    
                         <p>
-                            Password
-                            <input type="password" name="password">
+                            Email
+                            <input type="text" name="email">
                         </p>
-
+                    
                         {% for message in messages %}
                         <p>{{ message }}</p>
                         {% endfor %}
-
-                        <input type="submit" class="btn btn-primary" name="Sign In" value="Sign In">
+                    
+                        <input type="submit" class="btn btn-primary" name="Restore" value="Restore">
                     </form>
-
-                    <p>Not registered yet? <a href="{% url 'user_register' %}">Sign up</a></p>
-
-                    </section>
+                </section>
             </section>
         </section>
     </section>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
-
 
 </body>
 </html>

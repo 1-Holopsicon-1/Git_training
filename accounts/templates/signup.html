@@ -2,44 +2,58 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}"/>
     <title>Title</title>
 </head>
 <body>
 
-<h1>Register page</h1>
+    <section class="container-fluid bg">
+        <section class="row justify-content-center">
+            <section class="col-3">
+                <section class="form-container">
+                    <h3>Registration</h3>
+                    <form method="POST">
+                        {% csrf_token %}
+                    
+                        <p>
+                            {{ form.username.label }}
+                            {{ form.username }}
+                        </p>
+                        <p>
+                            {{ form.email.label }}
+                            {{ form.email }}
+                        </p>
+                        <p>
+                            {{ form.password1.label }}
+                            {{ form.password1 }}
+                        </p>
+                        <p>
+                            {{ form.password2.label }}
+                            {{ form.password2 }}
+                        </p>
+                        <p>
+                            {{ form.errors }}
+                        </p>
+                    
+                        {% for message in messages %}
+                        <p>{{ message }}</p>
+                        {% endfor %}
+                    
+                        <input type="submit" class="btn btn-primary btn-block" name="Sign Up" value="Sign Up">
+                    </form>
+                    Already registered? <a href="{% url 'user_login' %}">Log in</a>
+                    <br>
+                    Forgot your password? <a href="{% url 'user_restore' %}">Restore it</a>
+                </section>
+            </section>
+        </section>
+    </section>
 
-<form method="POST" action="">
-    {% csrf_token %}
-    <p>
-        {{ form.username.label }}
-        {{ form.username }}
-    </p>
-    <p>
-        {{ form.email.label }}
-        {{ form.email }}
-    </p>
-    <p>
-        {{ form.password1.label }}
-        {{ form.password1 }}
-    </p>
-    <p>
-        {{ form.password2.label }}
-        {{ form.password2 }}
-    </p>
-    <p>
-        {{ form.errors }}
-    </p>
-
-    {% for message in messages %}
-    <p>{{ message }}</p>
-    {% endfor %}
-
-    <input type="submit" name="Sign Up">
-</form>
-
-<p>Already registered? <a href="{% url 'login' %}">Log in</a></p>
-
-{% include 'menu.html' %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
 
 </body>
 </html>
