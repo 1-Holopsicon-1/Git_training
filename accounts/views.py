@@ -11,7 +11,7 @@ from django.template.defaulttags import url
 from django.urls import reverse
 from django.utils import timezone
 
-from accounts.account_restoration_email import get_email_body
+from accounts.emailing import get_confirm_email_body, get_password_email_body
 from accounts.forms import RegistrationForm
 from accounts.models import UserProperties
 from surveyanywhere.settings import EMAIL_HOST_USER
@@ -35,14 +35,65 @@ def register(request):
             if user is None:
                 form.save()
                 username = form.cleaned_data.get('username')
-                userProperties = UserProperties(user=User.objects.get(username=username), email_key=0, password_restore_called=timezone.now())
-                userProperties.save()
-                messages.success(request, f'Account with username "{username}" created.')
+                userParams = UserProperties(user=User.objects.get(username=username))
+                userParams.save()
+                messages.info(request, f'Account with username {username} created.')
+                return redirect(reverse('user_login'))
             else:
                 messages.error(request, f'Account with email "{email}" already exists.')
 
     context = {'form': form}
     return render(request, 'signup.html', context)
+
+def sendEmail(request):
+    user = request.user
+    if not user.is_authenticated:
+        return redirect(reverse('main'))
+    userProp = UserProperties.objects.get(user=user)
+    number = randint(100000, 999999)
+    email = EmailMessage(
+        'Account email verification',
+        get_confirm_email_body(user.username, number),
+        EMAIL_HOST_USER,
+        [user.email],
+    )
+    email.send()
+    userProp.email_key_verification = number
+    userProp.email_confirm_called = timezone.now()
+    userProp.save()
+    return redirect(reverse('user_register_confirm'))
+def registerConfirm(request):
+    user = request.user
+    if not user.is_authenticated:
+        return redirect(reverse('main'))
+
+    userProp = UserProperties.objects.get(user=user)
+    value = userProp.email_key_verification
+    if value == 0 or (timezone.now() - userProp.password_restore_called).total_seconds() > 1800:
+        userProp.email_key_restoration = 0
+        userProp.save()
+        return redirect(reverse('main'))
+
+    if request.method == "POST":
+        digit = request.POST.get('Digit1')
+        digit += request.POST.get('Digit2')
+        digit += request.POST.get('Digit3')
+        digit += request.POST.get('Digit4')
+        digit += request.POST.get('Digit5')
+        digit += request.POST.get('Digit6')
+
+        if int(digit) == value:
+            userProp.email_key_verification = 0
+            userProp.email_verified = True
+            userProp.save()
+            messages.info(request, f'Email of {user.username} verified.')
+            return redirect(reverse('user_login'))
+        else:
+            messages.error(request, f'Email code incorrect.')
+    context = {
+        'key': value,
+    }
+    return render(request, 'signup_confirm.html', context)
 
 def authentication(request):
     if request.user.is_authenticated:
@@ -84,13 +135,13 @@ def restore_access(request):
             number = randint(100000, 999999)
             email = EmailMessage(
                 'Account access restoration',
-                get_email_body(username, number),
+                get_password_email_body(username, number),
                 EMAIL_HOST_USER,
                 [email],
             )
             email.send()
             userParams = UserProperties.objects.get(user=user)
-            userParams.email_key = number
+            userParams.email_key_restoration = number
             userParams.password_restore_called = timezone.now()
             userParams.save()
             return redirect(reverse('user_restore_confirm') + f'?user={username}')
@@ -111,9 +162,9 @@ def restore_access_check(request):
         return redirect(reverse('main'))
 
     userProp = UserProperties.objects.get(user=user)
-    value = userProp.email_key
+    value = userProp.email_key_restoration
     if value == 0 or (timezone.now() - userProp.password_restore_called).total_seconds() > 1800:
-        userProp.email_key = 0
+        userProp.email_key_restoration = 0
         userProp.save()
         return redirect(reverse('main'))
 
@@ -127,6 +178,8 @@ def restore_access_check(request):
 
         if int(digit) == value:
             return redirect(reverse('user_restore_main') + f'?user={username}')
+        else:
+            messages.error(request, f'Email code incorrect.')
     context = {
         'key': value,
     }
@@ -142,8 +195,8 @@ def restore_access_main(request):
     except ObjectDoesNotExist:
         return redirect(reverse('main'))
     userProp = UserProperties.objects.get(user=user)
-    if userProp.email_key == 0 or (timezone.now() - userProp.password_restore_called).total_seconds() > 1800:
-        userProp.email_key = 0
+    if userProp.email_key_restoration == 0 or (timezone.now() - userProp.password_restore_called).total_seconds() > 1800:
+        userProp.email_key_restoration = 0
         userProp.save()
         return redirect(reverse('main'))
 
@@ -155,6 +208,8 @@ def restore_access_main(request):
             new_password = request.POST['new_password1']
             user.set_password(new_password)
             user.save()
+            userProp.email_key_restoration = 0
+            userProp.save()
             messages.info(request, 'Password was updated')
             return HttpResponseRedirect(reverse('user_login'))
     context['form'] = form

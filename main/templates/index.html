@@ -8,9 +8,13 @@
 <h1>TEST</h1>
 <br>
 
-<p>Hello, {{ request.user }}</p>
-
 {% if request.user.is_authenticated %}
+    <p>Hello, {{ request.user }}</p>
+    <p>Email confirmation status: {{ userProperties.email_verified }}</p>
+    {% if not userProperties.email_verified %}
+    Want to verify your email? <button><a href="{% url 'user_register_email_confirm' %}">Confirm it</a></button>
+    <br>
+{% endif %}
     <button><a href="{% url 'user_logout' %}">Log out</a></button>
 {% endif %}
 
