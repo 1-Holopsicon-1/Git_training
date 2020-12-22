@@ -16,8 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from accounts.views import authentication, register, deauthentication, restore_access, restore_access_check, \
-    restore_access_main, registerConfirm, sendEmail
+from accounts.views import authentication, register, deauthentication, restore_access, restore_access_check, restore_access_main, registerConfirm, sendEmail, acception
 from main.views import index
 
 urlpatterns = [

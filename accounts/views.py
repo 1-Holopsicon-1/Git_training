@@ -1,11 +1,12 @@
 from random import randint
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
+from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import EmailMessage
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect
 from django.template.defaulttags import url
 from django.urls import reverse
@@ -96,6 +97,9 @@ def registerConfirm(request):
     return render(request, 'signup_confirm.html', context)
 
 def authentication(request):
+    '''if not acception(request):
+        return redirect(reverse('user_register'))    тут я проверял работоспособность функции'''
+
     if request.user.is_authenticated:
         return redirect(reverse('main'))
 
@@ -214,3 +218,14 @@ def restore_access_main(request):
             return HttpResponseRedirect(reverse('user_login'))
     context['form'] = form
     return render(request, 'restore_main.html', context)
+
+def acception(request):
+    user = request.user
+    if not user.is_authenticated:
+        return 0
+
+    userProp = UserProperties.objects.get(user=user)
+
+    if userProp.rating <= 0 and request.method == "POST":
+        return 0
+    return 1
