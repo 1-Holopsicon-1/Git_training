@@ -2,7 +2,8 @@ from random import randint
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import user_passes_test
-from django.contrib.auth.forms import SetPasswordForm
+from django.contrib.auth.forms import SetPasswordForm, PasswordChangeForm
+from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import EmailMessage
@@ -63,6 +64,7 @@ def sendEmail(request):
     userProp.email_confirm_called = timezone.now()
     userProp.save()
     return redirect(reverse('user_register_confirm'))
+
 def registerConfirm(request):
     user = request.user
     if not user.is_authenticated:
@@ -210,14 +212,57 @@ def restore_access_main(request):
         form = SetPasswordForm(user, request.POST)
         if form.is_valid():
             new_password = request.POST['new_password1']
-            user.set_password(new_password)
-            user.save()
-            userProp.email_key_restoration = 0
-            userProp.save()
-            messages.info(request, 'Password was updated')
-            return HttpResponseRedirect(reverse('user_login'))
+            if not check_password(new_password, user.password):
+                user.set_password(new_password)
+                user.save()
+                userProp.email_key_restoration = 0
+                userProp.save()
+                messages.info(request, 'Password was updated')
+                return HttpResponseRedirect(reverse('user_login'))
+            else:
+                messages.error(request, 'New password is the same as the old one')
     context['form'] = form
     return render(request, 'restore_main.html', context)
+
+def changePassword(request):
+    if not request.user.is_authenticated:
+        return redirect(reverse('main'))
+
+    user = request.user
+    context = {}
+    form = PasswordChangeForm(user)
+    if request.method == 'POST':
+        form = PasswordChangeForm(user, request.POST)
+        if form.is_valid():
+            new_password = request.POST['new_password1']
+            if not check_password(new_password, user.password):
+                user.set_password(new_password)
+                user.save()
+                logout(request)
+                messages.info(request, 'Password was updated')
+                return HttpResponseRedirect(reverse('user_login'))
+            else:
+                messages.error(request, 'New password is the same as the old one')
+    context['form'] = form
+
+    return render(request, 'password_reset.html', context)
+
+def userInfo(request):
+    username = request.GET.get('user', None)
+    try:
+        user = User.objects.get(username=username)
+    except ObjectDoesNotExist:
+        return redirect(reverse('main'))
+
+    context = {
+        'isOwner': False,
+        'username': username,
+        'userProperties': None,
+    }
+    if request.user.is_authenticated and request.user.username == username:
+        context['isOwner'] = True
+        context['userProperties'] = UserProperties.objects.get(user=user)
+    return render(request, 'user_page.html', context)
 
 def acception(request):
     user = request.user

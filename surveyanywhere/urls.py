@@ -16,7 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from accounts.views import authentication, register, deauthentication, restore_access, restore_access_check, restore_access_main, registerConfirm, sendEmail, acception
+from accounts.views import authentication, register, deauthentication, restore_access, restore_access_check, \
+    restore_access_main, registerConfirm, sendEmail, acception, userInfo, changePassword
 from main.views import index
 
 urlpatterns = [
@@ -30,4 +31,6 @@ urlpatterns = [
     path('accounts/restore/', restore_access, name='user_restore'),
     path('accounts/restore_confirm/', restore_access_check, name='user_restore_confirm'),
     path('accounts/restore_main/', restore_access_main, name='user_restore_main'),
+    path('accounts/', userInfo, name='user_info'),
+    path('accounts/change', changePassword, name='user_change'),
 ]
