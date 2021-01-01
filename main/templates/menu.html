@@ -11,4 +11,9 @@
     <li>
         <a href="{% url 'user_login' %}">Authorization</a>
     </li>
+    {% if is_staff %}
+        <li>
+            <a href="{% url 'complaints_check' %}">Check complaints</a>
+        </li>
+    {% endif %}
 </ul>
