@@ -5,10 +5,15 @@
     <li>
         <a href="{% url 'main' %}">Main page</a>
     </li>
+    {% if not request.user.is_authenticated %}
     <li>
         <a href="{% url 'user_register' %}">Registration</a>
     </li>
     <li>
         <a href="{% url 'user_login' %}">Authorization</a>
+    </li>
+    {% endif %}
+    <li>
+        <a href="{% url 'survey_creation' %}">Create survey</a>
     </li>
 </ul>

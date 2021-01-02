@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'main',
     'accounts',
+    'surveys',
 ]
 
 MIDDLEWARE = [
@@ -57,7 +58,9 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': ['main/templates',
-                 'accounts/templates'],
+                 'accounts/templates',
+                 'surveys/templates',
+                 ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

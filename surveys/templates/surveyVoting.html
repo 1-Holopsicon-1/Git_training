@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% load static %}
+    <title>Title</title>
+</head>
+<body>
+    {% if notPassed %}
+        <form name="form" method="POST" id="form-main">
+            {% csrf_token %}
+
+            {% if survey.creator != None %}
+            <label>Creator: {{survey.creator}}</label>
+            {% else %}
+            <label>Creator was deleted</label>
+            {% endif %}
+            <br>
+            <label>{{survey.title}}</label>
+            <br>
+            <label>{{survey.description}}</label>
+            <br>
+
+            {% for question, answer_group, index in answers %}
+            <label>{{question.text}}</label>
+            <br>
+            {% for answer in answer_group %}
+                {% if question.multipleChoice %}
+                    <input name="answers_inp{{index}}" type="checkbox" id="answer_{{index}}_{{answer.text}}" value="{{answer.text}}" oninput="check()">
+                {% else %}
+                    <input name="answers_inp{{index}}" type="radio" id="answer_{{index}}_{{answer.text}}" value="{{answer.text}}" oninput="check()">
+                {% endif %}
+                <label>{{ answer.text }}</label>
+                <br>
+            {% endfor %}
+            {% endfor %}
+
+            <input id="vote_btn" type="submit" value="Vote" disabled>
+            <p></p>
+            <div id="div_messages">
+            </div>
+        </form>
+
+        <script src="{% static 'js/surveyVoting.js' %}"></script>
+    {% else %}
+    
+        {% if survey.creator != None %}
+        <label>Creator: {{survey.creator}}</label>
+        {% else %}
+        <label>Creator was deleted</label>
+        {% endif %}
+        <br>
+        <label>{{survey.title}}</label>
+        <br>
+        <label>{{survey.description}}</label>
+        <br>
+        {% for question, answer_group in answers %}
+            <p></p>
+            <label>{{question.text}}</label>
+            <br>
+            {% for answer in answer_group %}
+                {% for elem in answer %}
+                    <label>{{ elem }}</label>
+                {% endfor %}
+                <br>
+            {% endfor %}
+        {% endfor %}
+    {% endif %}
+</body>
+</html>

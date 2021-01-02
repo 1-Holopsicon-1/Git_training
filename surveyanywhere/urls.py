@@ -19,6 +19,7 @@ from django.urls import path
 from accounts.views import authentication, register, deauthentication, restore_access, restore_access_check, \
     restore_access_main, registerConfirm, sendEmail
 from main.views import index
+from surveys.views import createSurvey, passSurvey
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -31,4 +32,6 @@ urlpatterns = [
     path('accounts/restore/', restore_access, name='user_restore'),
     path('accounts/restore_confirm/', restore_access_check, name='user_restore_confirm'),
     path('accounts/restore_main/', restore_access_main, name='user_restore_main'),
+    path('surveys/create', createSurvey, name='survey_creation'),
+    path('surveys/survey', passSurvey, name='survey_pass'),
 ]
