@@ -22,13 +22,15 @@
         <textarea id="description" name="description" rows="4" cols="50" style="resize: none;"></textarea>
         <br>
 
-        <label>Limit access by link</label>
-        <input id="linkAccess" name="linkAccess" type="checkbox" onchange="showLink(this)">
+        <label id="linkAccess-text">{{ request.scheme }}://{{request.get_host}}/surveys/survey?survey=</label>
+        <input id="linkAccess-text-survey" maxlength="100" oninput="this.value = this.value.replace(/[ \n]/g, '')">
         <br>
-        <section id="linkAccess-section"></section><p></p>
+        <label>Limit access by link</label>
+        <input id="linkAccess" name="linkAccess" type="checkbox">
+        <br>
 
         <section id="questions-section"></section><p></p>
-
+        
         <input id="add" type="button" value="Add question" onclick="addQuestion()"><br>
         <input id="create" name="create" type="submit" value="Create">
 
@@ -38,5 +40,6 @@
     </form>
 
     <script src="{% static 'js/surveyCreationAjax.js' %}"></script>
+    <script src="{% static 'js/surveyHandler.js' %}"></script>
 </body>
 </html>

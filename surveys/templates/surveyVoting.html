@@ -36,9 +36,6 @@
             {% endfor %}
 
             <input id="vote_btn" type="submit" value="Vote" disabled>
-            <p></p>
-            <div id="div_messages">
-            </div>
         </form>
 
         <script src="{% static 'js/surveyVoting.js' %}"></script>
@@ -66,5 +63,12 @@
             {% endfor %}
         {% endfor %}
     {% endif %}
+
+    {% if survey.creator.username == request.user.username %}
+        <a href="{% url 'survey_edit' %}?survey={{survey.url}}"><input type="button" value="Edit"></a>
+    {% endif %}
+    <p></p>
+    <div id="div_messages">
+    </div>
 </body>
 </html>

@@ -14,8 +14,18 @@
     {% if not userProperties.email_verified %}
     Want to verify your email? <button><a href="{% url 'user_register_email_confirm' %}">Confirm it</a></button>
     <br>
-{% endif %}
+    {% endif %}
     <button><a href="{% url 'user_logout' %}">Log out</a></button>
+    <hr>
+    <p></p>
+    <p>Recent surveys</p>
+    <ul>
+        {% for survey in topSurveys %}
+        <li>
+            <a href="{% url 'survey_pass'%}?survey={{survey.url}}">{{survey.title}}</a>
+        </li>
+        {% endfor %}
+    </ul>
 {% endif %}
 
 {% include 'menu.html' %}
