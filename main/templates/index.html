@@ -19,13 +19,18 @@
     <hr>
     <p></p>
     <p>Recent surveys</p>
-    <ul>
+    <table>
+        <tr>
+            <td>Title</td>
+            <td>Rating</td>
+        </tr>
         {% for survey in topSurveys %}
-        <li>
-            <a href="{% url 'survey_pass'%}?survey={{survey.url}}">{{survey.title}}</a>
-        </li>
+        <tr>
+            <td><a href="{% url 'survey_pass'%}?survey={{survey.url}}">{{survey.title}}</a></td>
+            <td>{{survey.rating}}</td>
+        </tr>
         {% endfor %}
-    </ul>
+    </table>
 {% endif %}
 
 {% include 'menu.html' %}

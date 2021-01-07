@@ -7,6 +7,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.template.defaulttags import register
 from django.urls import reverse
+from django.utils import timezone
 
 from surveys.models import Survey, SurveyAnswer, SurveyQuestion
 
@@ -140,6 +141,51 @@ def passSurvey(request):
     except:
         return redirect(reverse('main'))
 
+    if request.is_ajax():
+        change = request.POST.get('rating_change')
+        data = {
+            'btn_change': '0',
+        }
+        if change == '1':
+            try:
+                survey.upped.get(username=request.user.username)
+            except:
+                survey.upped.add(request.user)
+                data['btn_change'] = '1'
+                survey.rating += 1
+                try:
+                    survey.downed.get(username=request.user.username)
+                except:
+                    pass
+                else:
+                    survey.downed.remove(request.user)
+                    survey.rating += 1
+            else:
+                survey.upped.remove(request.user)
+                survey.rating -= 1
+            survey.save()
+        elif change == '-1':
+            try:
+                survey.downed.get(username=request.user.username)
+            except:
+                survey.downed.add(request.user)
+                data['btn_change'] = '-1'
+                survey.rating -= 1
+                try:
+                    survey.upped.get(username=request.user.username)
+                except:
+                    pass
+                else:
+                    survey.upped.remove(request.user)
+                    survey.rating -= 1
+            else:
+                survey.downed.remove(request.user)
+                survey.rating += 1
+            survey.save()
+        data['count_like'] = survey.upped.count()
+        data['count_dislike'] = survey.downed.count()
+        return HttpResponse(json.dumps(data), content_type="application/json")
+
     questions = SurveyQuestion.objects.filter(survey=survey)
     answers = []
     for i in range(len(questions)):
@@ -186,6 +232,21 @@ def passSurvey(request):
                 answers_stats[i].append([answer.text, answer.users.count(), f'{int(100 * answer.users.count() / len(users[i]))}%'])
 
         context['answers'] = zip(questions, answers_stats)
+
+    context['rated'] = 0
+    try:
+        survey.upped.get(username=request.user.username)
+    except:
+        try:
+            survey.downed.get(username=request.user.username)
+        except:
+            pass
+        else:
+            context['rated'] = -1
+    else:
+        context['rated'] = 1
+
+    context['old'] = ((timezone.now() - survey.creationTime).days * 24 + (timezone.now() - survey.creationTime).seconds / 3600) >= 12
 
     return render(request, 'surveyVoting.html', context)
 

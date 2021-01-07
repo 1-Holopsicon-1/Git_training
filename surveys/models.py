@@ -11,6 +11,8 @@ class Survey(models.Model):
     creator = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, default=None)
     creationTime = models.DateTimeField(default=timezone.now)
     rating = models.IntegerField(default=0)
+    upped = models.ManyToManyField(User, related_name='upped')
+    downed = models.ManyToManyField(User, related_name='downed')
 
 class SurveyQuestion(models.Model):
     multipleChoice = models.BooleanField(default=False)
