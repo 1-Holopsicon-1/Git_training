@@ -48,6 +48,9 @@
                     Already registered? <a href="{% url 'user_login' %}">Log in</a>
                     <br>
                     Forgot your password? <a href="{% url 'user_restore' %}">Restore it</a>
+
+
+                    {% include 'menu.html' with auth_state=1 %}
                 </section>
             </section>
         </section>

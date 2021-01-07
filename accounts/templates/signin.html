@@ -41,6 +41,8 @@
                     <br>
                     Forgot your password? <a href="{% url 'user_restore' %}">Restore it</a>
 
+                    {% include 'menu.html' with auth_state=2 %}
+
                     </section>
             </section>
         </section>

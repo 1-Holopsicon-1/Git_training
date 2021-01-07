@@ -9,13 +9,30 @@
     <title>Title</title>
 </head>
 <body>
-<h1>TEST</h1>
+<h1>LANDING PAGE</h1>
 <br>
 
 {% if request.user.is_authenticated %}
     <p>Hello, {{ request.user.username }}</p>
     <a class="btn btn-primary" href="{% url 'user_info' %}?user={{ request.user.username }}">Profile</a>
     <a class="btn btn-primary" href="{% url 'user_logout' %}">Log out</a>
+    <hr>
+    <p></p>
+    <p>Top surveys</p>
+    <table>
+        <tr>
+            <td>Title</td>
+            <td>Rating</td>
+            <td>Participants</td>
+        </tr>
+        {% for survey, participants in topSurveys %}
+        <tr>
+            <td><a href="{% url 'survey_pass'%}?survey={{survey.url}}">{{survey.title}}</a></td>
+            <td>{{survey.rating}}</td>
+            <td>{{participants}}</td>
+        </tr>
+        {% endfor %}
+    </table>
 {% endif %}
 
 {% include 'menu.html' %}

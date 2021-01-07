@@ -1,7 +1,8 @@
 from random import randint
-from django.contrib import messages
+from django.contrib import messages, admin
+from django.contrib.admin import AdminSite
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import user_passes_test, login_required
 from django.contrib.auth.forms import SetPasswordForm, PasswordChangeForm
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import User
@@ -10,8 +11,9 @@ from django.core.mail import EmailMessage
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect
 from django.template.defaulttags import url
-from django.urls import reverse
+from django.urls import reverse, include
 from django.utils import timezone
+from django.views.generic import RedirectView
 
 from accounts.emailing import get_confirm_email_body, get_password_email_body
 from accounts.forms import RegistrationForm
@@ -19,6 +21,9 @@ from accounts.models import UserProperties
 from surveyanywhere.settings import EMAIL_HOST_USER
 
 #<editor-fold desc="MAIN PART">
+from surveys.models import Survey, SurveyQuestion, SurveyAnswer
+
+
 def register(request):
     if request.user.is_authenticated:
         return redirect(reverse('main'))
@@ -47,10 +52,9 @@ def register(request):
     context = {'form': form}
     return render(request, 'signup.html', context)
 
+@login_required(login_url='user_login')
 def sendEmail(request):
     user = request.user
-    if not user.is_authenticated:
-        return redirect(reverse('main'))
     userProp = UserProperties.objects.get(user=user)
     number = randint(100000, 999999)
     email = EmailMessage(
@@ -65,10 +69,9 @@ def sendEmail(request):
     userProp.save()
     return redirect(reverse('user_register_confirm'))
 
+@login_required(login_url='user_login')
 def registerConfirm(request):
     user = request.user
-    if not user.is_authenticated:
-        return redirect(reverse('main'))
 
     userProp = UserProperties.objects.get(user=user)
     value = userProp.email_key_verification
@@ -121,7 +124,7 @@ def authentication(request):
 
 def deauthentication(request):
     logout(request)
-    return redirect(reverse('main'))
+    return redirect(reverse('user_login'))
 #</editor-fold>
 
 def restore_access(request):
@@ -224,9 +227,8 @@ def restore_access_main(request):
     context['form'] = form
     return render(request, 'restore_main.html', context)
 
+@login_required(login_url='user_login')
 def changePassword(request):
-    if not request.user.is_authenticated:
-        return redirect(reverse('main'))
 
     user = request.user
     context = {}
@@ -262,15 +264,13 @@ def userInfo(request):
     if request.user.is_authenticated and request.user.username == username:
         context['isOwner'] = True
         context['userProperties'] = UserProperties.objects.get(user=user)
+        surveys = Survey.objects.filter(creator=user).order_by('-rating', '-creationTime', 'title')
+        context['surveys'] = []
+        for survey in surveys:
+            participants = set()
+            for question in SurveyQuestion.objects.filter(survey=survey):
+                for answer in SurveyAnswer.objects.filter(surveyQuestion=question):
+                    for user in answer.users.all():
+                        participants.add(user)
+            context['surveys'].append([survey, len(participants)])
     return render(request, 'user_page.html', context)
-
-def acception(request):
-    user = request.user
-    if not user.is_authenticated:
-        return 0
-
-    userProp = UserProperties.objects.get(user=user)
-
-    if userProp.rating <= 0 and request.method == "POST":
-        return 0
-    return 1

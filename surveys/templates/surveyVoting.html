@@ -22,6 +22,14 @@
             <label>Creator was deleted</label>
             {% endif %}
             <br>
+            {% if survey.creator.username == request.user.username %}
+                {% if survey.isLocked %}
+                    <input id="lock_btn" type="submit" value="Unlock">
+                {% else %}
+                    <input id="lock_btn" type="submit" value="Lock">
+                {% endif %}
+            {% endif %}
+            <br>
             <label>{{survey.title}}</label>
             <br>
             <label>{{survey.description}}</label>
@@ -50,6 +58,18 @@
         {% else %}
         <label>Creator was deleted</label>
         {% endif %}
+        <br>
+
+        <form name="form" method="POST" id="form-lock">
+            {% csrf_token %}
+            {% if survey.creator.username == request.user.username %}
+                {% if survey.isLocked %}
+                    <input id="lock_btn" type="submit" value="Unlock">
+                {% else %}
+                    <input id="lock_btn" type="submit" value="Lock">
+                {% endif %}
+            {% endif %}
+        </form>
         <br>
         <label>{{survey.title}}</label>
         <br>
@@ -91,6 +111,8 @@
     <p></p>
     <div id="div_messages">
     </div>
+
+    {% include 'menu.html' %}
     
     <script src="{% static 'js/surveyVotingAjax.js' %}"></script>
 </body>

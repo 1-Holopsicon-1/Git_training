@@ -6,14 +6,19 @@
         <a href="{% url 'main' %}">Main page</a>
     </li>
     {% if not request.user.is_authenticated %}
+    {% if auth_state != 1 %}
     <li>
         <a href="{% url 'user_register' %}">Registration</a>
     </li>
+    {% endif %}
+    {% if auth_state != 2 %}
     <li>
         <a href="{% url 'user_login' %}">Authorization</a>
     </li>
     {% endif %}
+    {% else %}
     <li>
         <a href="{% url 'survey_creation' %}">Create survey</a>
     </li>
+    {% endif %}
 </ul>

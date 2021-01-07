@@ -12,7 +12,7 @@ from django.utils import timezone
 from surveys.models import Survey, SurveyAnswer, SurveyQuestion
 
 
-@login_required(login_url='main')
+@login_required(login_url='user_login')
 def createSurvey(request):
     if request.is_ajax():
         # <editor-fold desc="CHECKS">
@@ -133,58 +133,69 @@ def createSurvey(request):
     }
     return render(request, 'surveyCreation.html', context)
 
-@login_required(login_url='main')
+@login_required(login_url='user_login')
 def passSurvey(request):
-    survey = request.GET.get('survey', None)
+    survey_url = request.GET.get('survey', None)
     try:
-        survey = Survey.objects.get(url=survey)
+        survey = Survey.objects.get(url=survey_url)
     except:
         return redirect(reverse('main'))
 
     if request.is_ajax():
-        change = request.POST.get('rating_change')
-        data = {
-            'btn_change': '0',
-        }
-        if change == '1':
-            try:
-                survey.upped.get(username=request.user.username)
-            except:
-                survey.upped.add(request.user)
-                data['btn_change'] = '1'
-                survey.rating += 1
-                try:
-                    survey.downed.get(username=request.user.username)
-                except:
-                    pass
-                else:
-                    survey.downed.remove(request.user)
-                    survey.rating += 1
-            else:
-                survey.upped.remove(request.user)
-                survey.rating -= 1
-            survey.save()
-        elif change == '-1':
-            try:
-                survey.downed.get(username=request.user.username)
-            except:
-                survey.downed.add(request.user)
-                data['btn_change'] = '-1'
-                survey.rating -= 1
+        change = request.POST.get('rating_change', None)
+        if change is not None:
+            data = {
+                'btn_change': '0',
+            }
+            if change == '1':
                 try:
                     survey.upped.get(username=request.user.username)
                 except:
-                    pass
+                    survey.upped.add(request.user)
+                    data['btn_change'] = '1'
+                    survey.rating += 1
+                    try:
+                        survey.downed.get(username=request.user.username)
+                    except:
+                        pass
+                    else:
+                        survey.downed.remove(request.user)
+                        survey.rating += 1
                 else:
                     survey.upped.remove(request.user)
                     survey.rating -= 1
-            else:
-                survey.downed.remove(request.user)
-                survey.rating += 1
+                survey.save()
+            elif change == '-1':
+                try:
+                    survey.downed.get(username=request.user.username)
+                except:
+                    survey.downed.add(request.user)
+                    data['btn_change'] = '-1'
+                    survey.rating -= 1
+                    try:
+                        survey.upped.get(username=request.user.username)
+                    except:
+                        pass
+                    else:
+                        survey.upped.remove(request.user)
+                        survey.rating -= 1
+                else:
+                    survey.downed.remove(request.user)
+                    survey.rating += 1
+                survey.save()
+            data['count_like'] = survey.upped.count()
+            data['count_dislike'] = survey.downed.count()
+            return HttpResponse(json.dumps(data), content_type="application/json")
+        elif (lock_change := request.POST.get('change_lock', None)) is not None:
+            survey.isLocked = not survey.isLocked
             survey.save()
-        data['count_like'] = survey.upped.count()
-        data['count_dislike'] = survey.downed.count()
-        return HttpResponse(json.dumps(data), content_type="application/json")
+            data = {
+                'btn_change': '1',
+            }
+            if survey.isLocked:
+                data['btn_change'] = '0'
+            return HttpResponse(json.dumps(data), content_type="application/json")
+
 
     questions = SurveyQuestion.objects.filter(survey=survey)
     answers = []
@@ -218,7 +229,7 @@ def passSurvey(request):
                     answer = SurveyAnswer.objects.get(surveyQuestion=questions[i], text=answer)
                     answer.users.add(request.user)
                     answer.save()
-            return redirect(reverse('main'))
+            return redirect(reverse('survey_pass') + f'?survey={survey_url}')
     else:
         answers_stats = []
         users = []
@@ -251,7 +262,7 @@ def passSurvey(request):
     return render(request, 'surveyVoting.html', context)
 
 
-@login_required(login_url='main')
+@login_required(login_url='user_login')
 def editSurvey(request):
     survey = request.GET.get('survey', None)
     try:

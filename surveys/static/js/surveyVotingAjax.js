@@ -1,8 +1,10 @@
 const form_rating = document.getElementById("form-rating");
+const form_lock = document.getElementById("form-lock");
 
 const csrf = document.getElementsByName('csrfmiddlewaretoken');
 const url = document.URL;
 
+const button_lock = document.getElementById('lock_btn');
 const button_like = document.getElementById('like_btn');
 const button_dislike = document.getElementById('dislike_btn');
 
@@ -131,6 +133,63 @@ $('#dislike_btn').on('click', function(e){
     })
 })
 
+$('#lock_btn').on('keydown', function(e){
+    e.preventDefault();
+
+    const fd = new FormData();
+    fd.append('csrfmiddlewaretoken', csrf[0].value);
+    fd.append('change_lock', '1');
+
+    $.ajax({
+        type: 'POST',
+        url: url,
+        enctype: 'multipart/form-data',
+        data: fd,
+        success: function(data){
+            update_lock_btn(data.btn_change);
+        },
+        error: function(data){
+            console.log("error");
+        },
+        cache: false,
+        contentType: false,
+        processData: false
+    })
+})
+
+$('#lock_btn').on('click', function(e){
+    e.preventDefault();
+
+    const fd = new FormData();
+    fd.append('csrfmiddlewaretoken', csrf[0].value);
+    fd.append('change_lock', '1');
+
+    $.ajax({
+        type: 'POST',
+        url: url,
+        enctype: 'multipart/form-data',
+        data: fd,
+        success: function(data){
+            update_lock_btn(data.btn_change);
+        },
+        error: function(data){
+            console.log("error");
+        },
+        cache: false,
+        contentType: false,
+        processData: false
+    })
+})
+
+function update_lock_btn(to){
+    if (to == '1'){
+        button_lock.value = 'Lock';
+    }
+    else{
+        button_lock.value = 'Unlock';
+    }
+}
+
 function update_buttons(state, count_like, count_dislike){
     console.log(state);
     if (state == '1'){
@@ -154,5 +213,9 @@ function update_buttons(state, count_like, count_dislike){
 }
 
 form_rating.addEventListener('submit', function(e){
+    e.preventDefault();
+})
+
+form_lock.addEventListener('submit', function(e){
     e.preventDefault();
 })

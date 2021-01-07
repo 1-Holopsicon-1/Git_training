@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path
 
 from accounts.views import authentication, register, deauthentication, restore_access, restore_access_check, \
-    restore_access_main, registerConfirm, sendEmail, acception, userInfo, changePassword
+    restore_access_main, registerConfirm, sendEmail, userInfo, changePassword
 from main.views import index
 from surveys.views import createSurvey, passSurvey, editSurvey
 
