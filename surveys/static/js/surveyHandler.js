@@ -14,6 +14,8 @@ function removeAnswer(number, component){
             break;
         }
     }
+    if (document.getElementById(`add_answer${number}`).hasAttribute('disabled'))
+        document.getElementById(`add_answer${number}`).removeAttribute('disabled');
 }
 
 function addAnswer(number, forced){
@@ -61,6 +63,9 @@ function addAnswer(number, forced){
         parent.appendChild(t);
         parent.appendChild(b);
         parent.appendChild(nline);
+
+        if (last == 9)
+            document.getElementById(`add_answer${number}`).setAttribute('disabled', 'true');
     }
 }
 
