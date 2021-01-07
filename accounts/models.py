@@ -10,4 +10,3 @@ class UserProperties(models.Model):
     password_restore_called = models.DateTimeField(default=timezone.now)
     email_confirm_called = models.DateTimeField(default=timezone.now)
     email_verified = models.BooleanField(default=False)
-    rating = models.IntegerField(default=0)

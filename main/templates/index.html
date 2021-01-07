@@ -2,6 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}"/>
+
     <title>Title</title>
 </head>
 <body>
@@ -9,31 +13,14 @@
 <br>
 
 {% if request.user.is_authenticated %}
-    <p>Hello, {{ request.user }}</p>
-    <p>Email confirmation status: {{ userProperties.email_verified }}</p>
-    {% if not userProperties.email_verified %}
-    Want to verify your email? <button><a href="{% url 'user_register_email_confirm' %}">Confirm it</a></button>
-    <br>
-    {% endif %}
-    <button><a href="{% url 'user_logout' %}">Log out</a></button>
-    <hr>
-    <p></p>
-    <p>Recent surveys</p>
-    <table>
-        <tr>
-            <td>Title</td>
-            <td>Rating</td>
-        </tr>
-        {% for survey in topSurveys %}
-        <tr>
-            <td><a href="{% url 'survey_pass'%}?survey={{survey.url}}">{{survey.title}}</a></td>
-            <td>{{survey.rating}}</td>
-        </tr>
-        {% endfor %}
-    </table>
+    <p>Hello, {{ request.user.username }}</p>
+    <a class="btn btn-primary" href="{% url 'user_info' %}?user={{ request.user.username }}">Profile</a>
+    <a class="btn btn-primary" href="{% url 'user_logout' %}">Log out</a>
 {% endif %}
 
 {% include 'menu.html' %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+
 
 </body>
 </html>
