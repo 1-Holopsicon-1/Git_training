@@ -9,11 +9,16 @@ from django.template.defaulttags import register
 from django.urls import reverse
 from django.utils import timezone
 
+from accounts.models import UserProperties
 from surveys.models import Survey, SurveyAnswer, SurveyQuestion
 
 
 @login_required(login_url='user_login')
 def createSurvey(request):
+    if not UserProperties.objects.get(user=request.user).email_verified:
+        messages.error(request, 'Your email is not verified')
+        return redirect(reverse('user_info') + f'?user={request.user.username}')
+
     if request.is_ajax():
         # <editor-fold desc="CHECKS">
         checked = False
@@ -141,6 +146,11 @@ def passSurvey(request):
     except:
         return redirect(reverse('main'))
 
+
+    if not UserProperties.objects.get(user=request.user).email_verified:
+        messages.error(request, 'Your email is not verified')
+        return redirect(reverse('user_info') + f'?user={request.user.username}')
+
     if request.is_ajax():
         change = request.POST.get('rating_change', None)
         if change is not None:
@@ -260,7 +270,6 @@ def passSurvey(request):
     context['old'] = ((timezone.now() - survey.creationTime).days * 24 + (timezone.now() - survey.creationTime).seconds / 3600) >= 12
 
     return render(request, 'surveyVoting.html', context)
-
 
 @login_required(login_url='user_login')
 def editSurvey(request):

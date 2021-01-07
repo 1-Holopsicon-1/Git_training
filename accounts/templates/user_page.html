@@ -21,6 +21,10 @@
         <a class="btn btn-primary" href="{% url 'user_change' %}">Change password</a>
         <a class="btn btn-primary" href="{% url 'user_logout' %}">Log out</a>
 
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+
         <hr>
         <p></p>
         <p>Your surveys</p>
