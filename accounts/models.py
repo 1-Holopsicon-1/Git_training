@@ -14,6 +14,6 @@ class UserProperties(models.Model):
 class Complaint(models.Model):
     user = models.ForeignKey(to=User, related_name="user", on_delete=models.CASCADE)
     author = models.ForeignKey(to=User, related_name="author", null=True, on_delete=models.SET_NULL)
-    date = models.DateTimeField(default=timezone.now)
+    date = models.DateField(default=timezone.now)
     title = models.CharField(default="", max_length=255)
     description = models.CharField(default="", max_length=255)

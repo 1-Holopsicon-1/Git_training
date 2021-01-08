@@ -42,6 +42,8 @@
             </tr>
             {% endfor %}
         </table>
+    {% else %}
+        <a href="{% url 'create_complaint' %}?user={{username}}"><input id="complain_btn" type="button" value="Complain"></a>
     {% endif %}
 
     {% include 'menu.html' %}

@@ -1,3 +1,4 @@
+import json
 from random import randint
 from django.contrib import messages, admin
 from django.contrib.admin import AdminSite
@@ -17,11 +18,12 @@ from django.views.generic import RedirectView
 
 from accounts.emailing import get_confirm_email_body, get_password_email_body
 from accounts.forms import RegistrationForm
-from accounts.models import UserProperties
+from accounts.models import UserProperties, Complaint
 from surveyanywhere.settings import EMAIL_HOST_USER
 
 #<editor-fold desc="MAIN PART">
 from surveys.models import Survey, SurveyQuestion, SurveyAnswer
+from surveys.views import check_string
 
 
 def register(request):
@@ -275,6 +277,59 @@ def userInfo(request):
             context['surveys'].append([survey, len(participants)])
     return render(request, 'user_page.html', context)
 
+@login_required(login_url='user_login')
 def complaint_check(request):
+    if not request.user.is_staff:
+        return render(request, 'permissionError.html')
     context = {}
+    complaints = Complaint.objects.all().order_by('date', 'title')
+    context['complaints'] = complaints
     return render(request, 'complaints.html', context)
+
+def complaintInfo(request):
+    context = {}
+    return render(request, 'complaint_watch.html', context)
+
+@login_required(login_url='user_login')
+def createComplaint(request):
+    user = request.GET.get('user', None)
+    if user == None:
+        return redirect(reverse('main'))
+
+    if request.is_ajax():
+        title = request.POST.get('title')
+        description = request.POST.get('description')
+        if not check_string(title):
+            messages.error(request, 'Wrong title')
+        if not check_string(description):
+            messages.error(request, 'Wrong description')
+
+        if len(messages.get_messages(request)) == 0:
+            messages.success(request, 'Check succeeded')
+
+            complaint = Complaint(user=User.objects.get(username=user), author=request.user, title=title, description=description)
+            complaint.save()
+
+            response = HttpResponseRedirect(reverse('main'))
+            response.status_code = 278
+            return response
+
+        data = {}
+
+        # <editor-fold desc="SEND-MESSAGES">
+        sended_messages = []
+        for message in messages.get_messages(request):
+            sended_messages.append({
+                "level": message.level,
+                "message": message.message,
+                "extra_tags": message.tags,
+            })
+        data['messages'] = sended_messages
+        # </editor-fold>
+
+        return HttpResponse(json.dumps(data), content_type="application/json")
+
+    context = {
+        'user': user,
+    }
+    return render(request, 'complaint_create.html', context)

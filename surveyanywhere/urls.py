@@ -17,7 +17,8 @@ from django.contrib import admin
 from django.urls import path
 
 from accounts.views import authentication, register, deauthentication, restore_access, restore_access_check, \
-    restore_access_main, registerConfirm, sendEmail, userInfo, changePassword, complaint_check
+    restore_access_main, registerConfirm, sendEmail, userInfo, changePassword, complaint_check, createComplaint, \
+    complaintInfo
 from main.views import index
 from surveys.views import createSurvey, passSurvey, editSurvey
 
@@ -34,7 +35,9 @@ urlpatterns = [
     path('accounts/restore_main/', restore_access_main, name='user_restore_main'),
     path('accounts/', userInfo, name='user_info'),
     path('accounts/change', changePassword, name='user_change'),
+    path('accounts/complain', createComplaint, name='create_complaint'),
     path('admin/complaints', complaint_check, name='complaints_check'),
+    path('admin/complaintsInfo', complaintInfo, name='complaints_watch'),
     path('surveys/create', createSurvey, name='survey_creation'),
     path('surveys/edit', editSurvey, name='survey_edit'),
     path('surveys/survey', passSurvey, name='survey_pass'),
