@@ -264,7 +264,7 @@ def userInfo(request):
         context['userProperties'] = UserProperties.objects.get(user=user)
     return render(request, 'user_page.html', context)
 
-def Complaint_check(request):
+def complaint_check(request):
     context = {}
     return render(request, 'complaints.html', context)
 

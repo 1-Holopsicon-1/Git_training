@@ -12,3 +12,9 @@ class UserProperties(models.Model):
     email_verified = models.BooleanField(default=False)
     rating = models.IntegerField(default=0)
 
+class Complaint(models.Model):
+    user = models.ForeignKey(to=User, related_name="user", on_delete=models.CASCADE)
+    author = models.ForeignKey(to=User, related_name="author", null=True, on_delete=models.SET_NULL)
+    date = models.DateTimeField(default=timezone.now)
+    title = models.CharField(default="", max_length=255)
+    description = models.CharField(default="", max_length=255)
