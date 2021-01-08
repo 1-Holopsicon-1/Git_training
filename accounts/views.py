@@ -274,3 +274,7 @@ def userInfo(request):
                         participants.add(user)
             context['surveys'].append([survey, len(participants)])
     return render(request, 'user_page.html', context)
+
+def complaint_check(request):
+    context = {}
+    return render(request, 'complaints.html', context)

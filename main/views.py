@@ -8,6 +8,7 @@ def index(request):
     context = {}
     if request.user.is_authenticated:
         context['userProperties'] = UserProperties.objects.get(user=request.user)
+        context['is_staff'] = request.user.is_staff
         surveys = Survey.objects.filter(isLocked=False).order_by('-rating', '-creationTime', 'title')[:5]
         context['topSurveys'] = []
         for survey in surveys:

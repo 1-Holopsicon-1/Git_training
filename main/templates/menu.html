@@ -21,4 +21,9 @@
         <a href="{% url 'survey_creation' %}">Create survey</a>
     </li>
     {% endif %}
+    {% if is_staff %}
+        <li>
+            <a href="{% url 'complaints_check' %}">Check complaints</a>
+        </li>
+    {% endif %}
 </ul>

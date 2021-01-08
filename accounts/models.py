@@ -10,3 +10,10 @@ class UserProperties(models.Model):
     password_restore_called = models.DateTimeField(default=timezone.now)
     email_confirm_called = models.DateTimeField(default=timezone.now)
     email_verified = models.BooleanField(default=False)
+
+class Complaint(models.Model):
+    user = models.ForeignKey(to=User, related_name="user", on_delete=models.CASCADE)
+    author = models.ForeignKey(to=User, related_name="author", null=True, on_delete=models.SET_NULL)
+    date = models.DateTimeField(default=timezone.now)
+    title = models.CharField(default="", max_length=255)
+    description = models.CharField(default="", max_length=255)
