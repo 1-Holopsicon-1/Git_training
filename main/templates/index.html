@@ -1,54 +1,43 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width">
-    <title>Title</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
     {% load static %}
-    <link href="{% static 'css/style.css' %}" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}"/>
 
+    <title>Title</title>
 </head>
-
 <body>
-    {% include 'menu.html' %}
-    <br>
-   
-    <div class="hi">
-        Hello, {{ request.user }}
-    </div>
-    <div class="info">
-        <div class="name_head">
-            <h2>Your info</h2>
-        </div>
-        <div class="login">
-            <span>Login</span>
-            <div class="out_l">{{ request.user.email }}</div> 
-        </div>
-        <div class="email">
-            <span>Email</span>
-        </div>
-        <div class="change">
-            Change password
-        </div>
-    </div>
+<h1>LANDING PAGE</h1>
+<br>
 
-    {% if request.user.is_authenticated %}
-    <button><a href="{% url 'user_logout' %}">Log out</a></button>
-    {% endif %}
+{% if request.user.is_authenticated %}
+    <p>Hello, {{ request.user.username }}</p>
+    <a class="btn btn-primary" href="{% url 'user_info' %}?user={{ request.user.username }}">Profile</a>
+    <a class="btn btn-primary" href="{% url 'user_logout' %}">Log out</a>
+    <hr>
+    <p></p>
+    <p>Top surveys</p>
+    <table>
+        <tr>
+            <td>Title</td>
+            <td>Rating</td>
+            <td>Participants</td>
+        </tr>
+        {% for survey, participants in topSurveys %}
+        <tr>
+            <td><a href="{% url 'survey_pass'%}?survey={{survey.url}}">{{survey.title}}</a></td>
+            <td>{{survey.rating}}</td>
+            <td>{{participants}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endif %}
 
-    
-
+{% include 'menu.html' %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
 
 
 </body>
-
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
-    crossorigin="anonymous"></script>
-
 </html>

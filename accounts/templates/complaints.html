@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>It is complaint check page</title>
+</head>
+<body>
+
+<table>
+    <tr>
+        <td>Title</td>
+        <td>Date</td>
+        <td>Author</td>
+        <td>User</td>
+    </tr>
+
+    {% for complaint in complaints %}
+    <tr>
+        <td><a href="{% url 'complaints_watch'%}?id={{complaint.id}}">{{ complaint.title }}</a></td>
+        <td>{{ complaint.date|date:"Y-m-d" }}</td>
+        <td>{{ complaint.author }}</td>
+        <td>{{ complaint.user }}</td>
+        <script>
+            console.log({{complaint.date|safe}});
+        </script>
+    </tr>
+    {% endfor %}
+</table>
+
+{% include 'menu.html' with checking_complaints=1 %}
+</body>
+</html>

@@ -2,6 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}"/>
     <title>Title</title>
 </head>
 <body>
@@ -9,17 +12,18 @@
         <section class="row justify-content-center">
             <section class="col-3">
                 <section class="form-container">
-                    {% csrf_token %}
-                    <h3>Enter new password</h3>
-
+                    <form method="POST" action="">
+                        {% csrf_token %}
+                        <h3>Enter new password</h3>
+                        {% for field in form %}
                         <p>
-                            New password
-                            <input type="password" name="password1">
+                            {{ field.label }}
+                            {{ field }}
                         </p>
+                        {% endfor %}
 
                         <p>
-                            New password verification
-                            <input type="password" name="password2">
+                            {{ form.errors }}
                         </p>
 
                         {% for message in messages %}
@@ -27,9 +31,12 @@
                         {% endfor %}
 
                         <input type="submit" class="btn btn-primary" name="Restore" value="Restore">
+                    </form>
                 </section>
             </section>
         </section>
     </section>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+
 </body>
 </html>
