@@ -13,7 +13,7 @@
                 {% if not request.user.is_authenticated %}
                     {% if auth_state != 1 %}
                         <li class="nav-item"><a class="nav-link" href="{% url 'user_login' %}">
-                                Authorization
+                                Profile
                         </a></li>
                     {% endif %}
                     {% if auth_state != 2 %}

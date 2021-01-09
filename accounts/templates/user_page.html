@@ -1,54 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
     {% load static %}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" />
     <title>Title</title>
 </head>
+
 <body>
-
-    <h4> {{ username }} </h4>
-    {% if isOwner %}
-        <p>Email confirmation status: {{ userProperties.email_verified }}</p>
-        {% if not userProperties.email_verified %}
-            Want to verify your email? <a href="{% url 'user_register_email_confirm' %}">Confirm it</a>
-            <br>
-        {% endif %}
-        <a class="btn btn-primary" href="{% url 'user_change' %}">Change password</a>
-        <a class="btn btn-primary" href="{% url 'user_logout' %}">Log out</a>
-
-        {% for message in messages %}
-            <p>{{ message }}</p>
-        {% endfor %}
-
-        <hr>
-        <p></p>
-        <p>Your surveys</p>
-        <table>
-            <tr>
-                <td>Title</td>
-                <td>Rating</td>
-                <td>Participants</td>
-            </tr>
-            {% for survey, participants in surveys %}
-            <tr>
-                <td><a href="{% url 'survey_pass'%}?survey={{survey.url}}">{{survey.title}}</a></td>
-                <td>{{survey.rating}}</td>
-                <td>{{participants}}</td>
-            </tr>
-            {% endfor %}
-        </table>
-    {% else %}
-        <a href="{% url 'create_complaint' %}?user={{username}}"><input id="complain_btn" type="button" value="Complain"></a>
-    {% endif %}
-
-    {% include 'menu.html' %}
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
     
+    {% include 'menu.html' %}
+    
+    <div>
+        <h4 class="hi"> Hello, {{ username }} </h4>
+    </div>
+
+
+    <div class="main">
+        <div class="info">
+            <div class="name_head"><h4>Your info</h4> </div>
+            <div class="info_out" style=""><span style="padding-right: 1rem;">Login</span> <span
+                    class="out">{{username}}</span></div>
+            <div class="info_out" style=""><span style="padding-right: 1rem;">Email</span> <span
+                    class="out">{{request.user.email}}</span></div>
+            {% if isOwner %}
+            <div class="info_out" style=""> <span style="padding-right: 1rem;">Email confirmation status:</span> <span
+                    class="out">{{ userProperties.email_verified }}</span></div>
+            {% if not userProperties.email_verified %}
+            <div class="info_out" style=""> <span style="padding-right: 1rem;"> Want to verify your email?</span><span
+                    class="out"> <a href="{% url 'user_register_email_confirm' %}">Confirm it</a> </span></div>
+            {% endif %}
+            <div class="btn_info"><a class="btn btn-primary" href="{% url 'user_change' %}">Change password</a>
+                <a class="btn btn-primary" href="{% url 'user_logout' %}" style="margin-left: 1rem;">Log out</a>
+            </div>
+        </div>
+
+
+        <div class="surv">
+            {% for message in messages %}
+            <p>{{ message }}</p>
+            {% endfor %}
+            <div class="title_surv"><h5>Your surveys</h5></div> 
+            <div style="display: inline;">
+            {% for survey, participants in surveys %}
+                <ul class="table_title">
+                    <li>
+                        Name of surv
+                    </li>
+                    <li><a href="{% url 'survey_pass'%}?survey={{survey.url}}">{{survey.title}}</a></li>
+                </ul>
+                <ul class="table_title">   
+                    <li>
+                        Rating
+                    </li>
+                    <li>{{survey.rating}}</li>
+                </ul> 
+                <ul class="table_title">
+                    <li>
+                        Participants
+                    </li>
+                    <li>{{participants}}</li>
+                </ul>
+                
+               
+                {% endfor %}
+            </div>
+            {% else %}
+            <a href="{% url 'create_complaint' %}?user={{username}}"><input id="complain_btn" type="button"
+                    value="Complain"></a>
+            {% endif %}
+        </div>
+</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+        crossorigin="anonymous"></script>
+
 </body>
+
 </html>
