@@ -19,3 +19,8 @@ def index(request):
                         participants.add(user)
             context['topSurveys'].append([survey, len(participants)])
     return render(request, 'index.html', context)
+
+
+def faq(request):
+    context = {}
+    return render(request, "faq.html", context)

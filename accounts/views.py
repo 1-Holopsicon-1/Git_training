@@ -333,3 +333,4 @@ def createComplaint(request):
         'user': user,
     }
     return render(request, 'complaint_create.html', context)
+

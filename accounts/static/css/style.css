@@ -159,7 +159,7 @@ ul.table_title li{
 }
 
 .container{
-     
+    justify-content: center;
 }
 
 .form-froup{

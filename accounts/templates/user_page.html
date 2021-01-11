@@ -13,9 +13,9 @@
 </head>
 
 <body>
-    
+
     {% include 'menu.html' %}
-    
+
     <div>
         <h4 class="hi"> Hello, {{ username }} </h4>
     </div>
@@ -23,7 +23,9 @@
 
     <div class="main">
         <div class="info">
-            <div class="name_head"><h4>Your info</h4> </div>
+            <div class="name_head">
+                <h4>Your info</h4>
+            </div>
             <div class="info_out" style=""><span style="padding-right: 1rem;">Login</span> <span
                     class="out">{{username}}</span></div>
             <div class="info_out" style=""><span style="padding-right: 1rem;">Email</span> <span
@@ -45,29 +47,31 @@
             {% for message in messages %}
             <p>{{ message }}</p>
             {% endfor %}
-            <div class="title_surv"><h5>Your surveys</h5></div> 
-            <div style="display: inline;">
-            {% for survey, participants in surveys %}
+            <div class="title_surv">
+                <h5>Your surveys</h5>
+            </div>
+            <div style="display: inline; cl">
+                {% for survey, participants in surveys %}
                 <ul class="table_title">
                     <li>
                         Name of surv
                     </li>
-                    <li><a href="{% url 'survey_pass'%}?survey={{survey.url}}">{{survey.title}}</a></li>
-                </ul>
-                <ul class="table_title">   
                     <li>
                         Rating
                     </li>
-                    <li>{{survey.rating}}</li>
-                </ul> 
-                <ul class="table_title">
                     <li>
                         Participants
                     </li>
+
+                </ul>
+                <ul class="table_title">
+                    <li><a href="{% url 'survey_pass'%}?survey={{survey.url}}">{{survey.title}}</a></li>
+                    <li>{{survey.rating}}</li>
                     <li>{{participants}}</li>
                 </ul>
-                
-               
+
+
+
                 {% endfor %}
             </div>
             {% else %}
@@ -75,7 +79,7 @@
                     value="Complain"></a>
             {% endif %}
         </div>
-</div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"

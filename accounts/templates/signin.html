@@ -20,7 +20,7 @@
                 <form method="POST" action="" class="" >
                     {% csrf_token %}
                     <div class="form-froup col-lg-auto">
-                        <label for="inputName " style="padding-right: 0.5rem;">
+                        <label for="inputName" style="padding-right: 0.5rem;">
                             Username
                         </label>
                         <input type="text" name="username" class="form-control " id="inputName" 
@@ -32,7 +32,7 @@
                             Password
                         </label>
                         <input type="password" name="pass" class="form-control" id="inputPass" 
-                            placeholder="Password"   required>
+                            placeholder="Password" required>
                     </div>
                     <div style="color: crimson;">
                         {% for message in messages %}
