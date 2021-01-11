@@ -130,6 +130,10 @@ a {
     margin-left: 5rem;
 }
 
+.form-control{
+    border-radius: 20px;
+}
+
 .block_surv{
     background-color: #145DA0;
     color: #ffffff;
@@ -140,4 +144,48 @@ ul.table_title li{
     margin-right: 5px;
     list-style-type: none;
     padding: 3px;
+}
+.row{
+    display: inline-flex;
+    background-color: #145DA0;
+    flex-direction: column;
+    justify-content: center;
+    background:  #145DA0;
+    margin-top: 5rem;
+    border-radius: 20px;
+    text-align: center;
+    padding: 1rem;
+    margin-left: 3rem;
+}
+
+.container{
+     
+}
+
+.form-froup{
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.extended_log{
+    justify-content: left;
+    float: left;
+    display: inline-block;
+    
+}
+
+.btn{
+    font-size: 1.5rem;
+    
+    margin: 1rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    border-radius: 20px;
+    background-color: #2E8BC0;
+}
+
+.urls_wind{
+    color: #B9C4FF !important; 
+    text-decoration: underline;
 }
