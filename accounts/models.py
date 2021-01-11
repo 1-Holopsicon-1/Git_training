@@ -10,6 +10,9 @@ class UserProperties(models.Model):
     password_restore_called = models.DateTimeField(default=timezone.now)
     email_confirm_called = models.DateTimeField(default=timezone.now)
     email_verified = models.BooleanField(default=False)
+    access_limited = models.DateTimeField(default=timezone.now)
+    banned = models.DateTimeField(default=timezone.now)
+    permanent_ban = models.BooleanField(default=False)
 
 class Complaint(models.Model):
     user = models.ForeignKey(to=User, related_name="user", on_delete=models.CASCADE)
