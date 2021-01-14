@@ -1,3 +1,6 @@
+body{
+    color: white;
+}
 
 .form-control {
     border-radius: 20px;
@@ -19,13 +22,9 @@
     text-align: center;
     margin-top: 5rem;
     font-size: x-large;
+    color: #ffffff;
 }
 
-.extended_log {
-    justify-content: center;
-    float: center;
-    display: inline-block;
-}
 
 .btn {
     margin-left: 0px;
@@ -55,4 +54,9 @@
 
 .form_control{
     padding-left: 1rem;
+}
+.extended_log {
+    justify-content: center;
+    float: center;
+    display: inline-block;
 }
