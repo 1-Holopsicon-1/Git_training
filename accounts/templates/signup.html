@@ -20,23 +20,28 @@
                         {% csrf_token %}
                     
                         <p>
-                            {{ form.username.label }}
-                            {{ form.username }}
+                            Username*
+                            <input type="text" name="username">
                         </p>
                         <p>
-                            {{ form.email.label }}
-                            {{ form.email }}
+                            Email*
+                            <input type="text" name="email">
                         </p>
                         <p>
-                            {{ form.password1.label }}
-                            {{ form.password1 }}
+                            First Name
+                            <input type="text" name="first_name">
                         </p>
                         <p>
-                            {{ form.password2.label }}
-                            {{ form.password2 }}
+                            Last Name
+                            <input type="text" name="last_name">
                         </p>
                         <p>
-                            {{ form.errors }}
+                            Password*
+                            <input type="password" name="password1">
+                        </p>
+                        <p>
+                            Confirm password*
+                            <input type="password" name="password2">
                         </p>
                     
                         {% for message in messages %}

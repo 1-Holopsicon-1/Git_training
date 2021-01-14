@@ -358,9 +358,10 @@ def editSurvey(request):
                 for question in SurveyQuestion.objects.filter(survey=survey):
                     question.delete()
                 survey.rating = 0
-                survey.save()
                 survey.downed.clear()
                 survey.upped.clear()
+                survey.save()
+                i = 0
                 while request.POST.get(f'question{i + 1}', default=None) != None:
                     surveyQuestion = SurveyQuestion(survey=survey, text=request.POST.get(f'question{i + 1}'), multipleChoice=(request.POST.get(f'multichoice{i + 1}')=='true'))
                     surveyQuestion.save()

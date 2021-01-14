@@ -37,25 +37,16 @@ def register(request):
     form = RegistrationForm()
 
     if request.method == 'POST':
-        form = RegistrationForm(request.POST)
+        form = RegistrationForm(request)
         if form.is_valid():
-            email = form.cleaned_data.get('email')
-            try:
-                user = User.objects.get(email=email)
-            except ObjectDoesNotExist:
-                user = None
+            form.save()
+            username = form.data.get('username')
+            userParams = UserProperties(user=User.objects.get(username=username))
+            userParams.save()
+            messages.info(request, f'Account with username {username} created.')
+            return redirect(reverse('user_login'))
 
-            if user is None:
-                form.save()
-                username = form.cleaned_data.get('username')
-                userParams = UserProperties(user=User.objects.get(username=username))
-                userParams.save()
-                messages.info(request, f'Account with username {username} created.')
-                return redirect(reverse('user_login'))
-            else:
-                messages.error(request, f'Account with email "{email}" already exists.')
-
-    context = {'form': form}
+    context = {}
     return render(request, 'signup.html', context)
 
 @login_required(login_url='user_login')
