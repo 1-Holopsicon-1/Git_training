@@ -114,6 +114,24 @@
     <div id="div_messages">
     </div>
 
+    <h5>Comments</h5>
+    <div>
+        {% for comment, childComments in comments %}
+        <a href="{% url 'user_info' %}?user={{ comment.user.username }}">{{comment.user.username}}</a>
+        <label>{{ comment.creationTime|date:"H:i d.m.Y" }}</label><br>
+        <label>{{ comment.text }}</label>
+        {% for comment_ in childComments %}
+        <p></p>
+        <a href="{% url 'user_info' %}?user={{ comment.user.username }}" style="margin-left: 50px;">{{comment_.user.username}}</a>
+        <label>{{ comment_.creationTime|date:"H:i d.m.Y" }}</label>
+        <label style="color: dimgray;">in reply to {{ comment_.parentComment.user.username }}</label>
+        <br>
+        <label style="margin-left: 50px;">{{ comment_.text }}</label>
+        {% endfor %}
+        <p></p>
+        {% endfor %}
+    </div>
+
     {% include 'menu.html' %}
     
     <script src="{% static 'js/surveyVotingAjax.js' %}"></script>

@@ -10,7 +10,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 from accounts.decorators import email_verified, ban_check, limits_check
-from surveys.models import Survey, SurveyAnswer, SurveyQuestion
+from surveys.models import Survey, SurveyAnswer, SurveyQuestion, Commentary
 
 
 @login_required(login_url='user_login')
@@ -221,9 +221,16 @@ def passSurvey(request):
         if participated:
             break
 
+    rootComments = Commentary.objects.filter(survey=survey).order_by('creationTime')
+    comments = []
+    for comment in rootComments:
+        childComments = Commentary.objects.filter(rootComment=comment).order_by('creationTime')
+        comments.append([comment, childComments])
+
     context = {
         'survey': survey,
         'notPassed': not participated,
+        'comments': comments,
     }
 
     if not participated:
