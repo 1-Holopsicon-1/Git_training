@@ -46,12 +46,12 @@
                     {% for answer, jndex in answer_group %}
                         <label id="answer{{index}}_{{jndex}}l">Answer{{jndex}}</label>
                         <textarea id="answer{{index}}_{{jndex}}" name="answer{{index}}_{{jndex}}" rows="2" cols="50" maxlength="255" style="resize: none;">{{answer.text}}</textarea>
-                        <input id="answer{{index}}_{{jndex}}b" type="button" value="delete" onclick="removeAnswer(index, this)">
+                        <input id="answer{{index}}_{{jndex}}b" type="button" value="delete" onclick="removeAnswer({{jndex}}, this)">
                         <br id="answer{{index}}_{{jndex}}nl">
                     {% endfor %}
                 </section>
 
-                <input id="add_answer{{index}}"type="button" value="Add answer" onclick="addAnswer(index, false)">
+                <input id="add_answer{{index}}"type="button" value="Add answer" onclick="addAnswer({{index}}, false)">
                 <p id="pline{{index}}"></p>
             {% endfor %}
         </section><p></p>

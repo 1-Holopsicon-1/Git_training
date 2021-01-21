@@ -1,5 +1,8 @@
+import datetime
 import json
 from random import randint
+
+import pytz
 from django.contrib import messages, admin
 from django.contrib.admin import AdminSite
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
@@ -16,6 +19,7 @@ from django.urls import reverse, include
 from django.utils import timezone
 from django.views.generic import RedirectView
 
+from accounts.decorators import staff_required, ban_check
 from accounts.emailing import get_confirm_email_body, get_password_email_body
 from accounts.forms import RegistrationForm
 from accounts.models import UserProperties, Complaint
@@ -33,28 +37,20 @@ def register(request):
     form = RegistrationForm()
 
     if request.method == 'POST':
-        form = RegistrationForm(request.POST)
+        form = RegistrationForm(request)
         if form.is_valid():
-            email = form.cleaned_data.get('email')
-            try:
-                user = User.objects.get(email=email)
-            except ObjectDoesNotExist:
-                user = None
+            form.save()
+            username = form.data.get('username')
+            userParams = UserProperties(user=User.objects.get(username=username))
+            userParams.save()
+            messages.info(request, f'Account with username {username} created.')
+            return redirect(reverse('user_login'))
 
-            if user is None:
-                form.save()
-                username = form.cleaned_data.get('username')
-                userParams = UserProperties(user=User.objects.get(username=username))
-                userParams.save()
-                messages.info(request, f'Account with username {username} created.')
-                return redirect(reverse('user_login'))
-            else:
-                messages.error(request, f'Account with email "{email}" already exists.')
-
-    context = {'form': form}
+    context = {}
     return render(request, 'signup.html', context)
 
 @login_required(login_url='user_login')
+@ban_check(redirect_html='permissionError.html', parameters_permanent={'code': 3}, parameters_temporary={'code': 2})
 def sendEmail(request):
     user = request.user
     userProp = UserProperties.objects.get(user=user)
@@ -72,6 +68,7 @@ def sendEmail(request):
     return redirect(reverse('user_register_confirm'))
 
 @login_required(login_url='user_login')
+@ban_check(redirect_html='permissionError.html', parameters_permanent={'code': 3}, parameters_temporary={'code': 2})
 def registerConfirm(request):
     user = request.user
 
@@ -230,8 +227,8 @@ def restore_access_main(request):
     return render(request, 'restore_main.html', context)
 
 @login_required(login_url='user_login')
+@ban_check(redirect_html='permissionError.html', parameters_permanent={'code': 3}, parameters_temporary={'code': 2})
 def changePassword(request):
-
     user = request.user
     context = {}
     form = PasswordChangeForm(user)
@@ -251,6 +248,7 @@ def changePassword(request):
 
     return render(request, 'password_reset.html', context)
 
+@ban_check(redirect_html='permissionError.html', parameters_permanent={'code': 3}, parameters_temporary={'code': 2})
 def userInfo(request):
     username = request.GET.get('user', None)
     try:
@@ -278,16 +276,71 @@ def userInfo(request):
     return render(request, 'user_page.html', context)
 
 @login_required(login_url='user_login')
+@ban_check(redirect_html='permissionError.html', parameters_permanent={'code': 3}, parameters_temporary={'code': 2})
+@staff_required(redirect_html='permissionError.html', parameters={'code': 0})
 def complaint_check(request):
-    if not request.user.is_staff:
-        return render(request, 'permissionError.html')
     context = {}
     complaints = Complaint.objects.all().order_by('date', 'title')
     context['complaints'] = complaints
     return render(request, 'complaints.html', context)
 
+@login_required(login_url='user_login')
+@ban_check(redirect_html='permissionError.html', parameters_permanent={'code': 3}, parameters_temporary={'code': 2})
+@staff_required(redirect_html='permissionError.html', parameters={'code': 0})
 def complaintInfo(request):
-    context = {}
+    complaintID = request.GET.get('id', None)
+    try:
+        complaint = Complaint.objects.get(id=complaintID)
+    except:
+        return redirect(reverse('main'))
+
+    if request.is_ajax():
+        if request.POST.get('reject', None) is not None:
+            pass
+        else:
+            verdict = request.POST.get('verdict')
+            userProp = UserProperties.objects.get(user=complaint.user)
+            if verdict == "Permanent ban":
+                userProp.permanent_ban = True
+                userProp.save()
+            elif verdict == "Temporary right limit":
+                switch = request.POST.get('switch-input')
+                if switch == 'true':
+                    until_time = request.POST.get('until-time')
+                    until_time = until_time.split('-')
+                    userProp.access_limited = timezone.get_current_timezone().normalize(datetime.datetime(int(until_time[0]), int(until_time[1]), int(until_time[2]), tzinfo=pytz.UTC))
+                else:
+                    for_time = request.POST.get('for-time')
+                    for_time = for_time.split()
+                    number = int(for_time[0])
+                    if 'minute' in for_time[1]:
+                        userProp.access_limited = timezone.now() + timezone.timedelta(minutes=number)
+                    elif 'hour' in for_time[1]:
+                        userProp.access_limited = timezone.now() + timezone.timedelta(hours=number)
+                    elif 'day' in for_time[1]:
+                        userProp.access_limited = timezone.now() + timezone.timedelta(days=number)
+                userProp.save()
+            elif verdict == "Temporary ban":
+                switch = request.POST.get('switch-input')
+                if switch == 'true':
+                    until_time = request.POST.get('until-time')
+                    until_time = until_time.split('-')
+                    userProp.banned = timezone.get_current_timezone().normalize(datetime.datetime(int(until_time[0]), int(until_time[1]), int(until_time[2]), tzinfo=pytz.UTC))
+                else:
+                    for_time = request.POST.get('for-time')
+                    for_time = for_time.split()
+                    number = int(for_time[0])
+                    if 'minute' in for_time[1]:
+                        userProp.banned = timezone.now() + timezone.timedelta(minutes=number)
+                    elif 'hour' in for_time[1]:
+                        userProp.banned = timezone.now() + timezone.timedelta(hours=number)
+                    elif 'day' in for_time[1]:
+                        userProp.banned = timezone.now() + timezone.timedelta(days=number)
+                userProp.save()
+        complaint.delete()
+
+
+    context = {'complaint': complaint}
     return render(request, 'complaint_watch.html', context)
 
 @login_required(login_url='user_login')

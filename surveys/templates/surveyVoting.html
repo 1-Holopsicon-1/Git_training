@@ -17,7 +17,8 @@
             {% csrf_token %}
 
             {% if survey.creator != None %}
-            <label>Creator: {{survey.creator}}</label>
+            <label>Creator: </label>
+            <a href="{% url 'user_info' %}?user={{ survey.creator.username }}">{{survey.creator.username}}</a>
             {% else %}
             <label>Creator was deleted</label>
             {% endif %}
@@ -54,7 +55,8 @@
     {% else %}
     
         {% if survey.creator != None %}
-        <label>Creator: {{survey.creator}}</label>
+        <label>Creator: </label>
+        <a href="{% url 'user_info' %}?user={{ survey.creator.username }}">{{survey.creator.username}}</a>
         {% else %}
         <label>Creator was deleted</label>
         {% endif %}

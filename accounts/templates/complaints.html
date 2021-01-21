@@ -20,9 +20,6 @@
         <td>{{ complaint.date|date:"Y-m-d" }}</td>
         <td>{{ complaint.author }}</td>
         <td>{{ complaint.user }}</td>
-        <script>
-            console.log({{complaint.date|safe}});
-        </script>
     </tr>
     {% endfor %}
 </table>

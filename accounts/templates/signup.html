@@ -15,36 +15,38 @@
 
 <body>
     {% include 'menu.html' with auth_state=2 %}
-    <div class="container"  style="color: white;">
+    <div class="container" style="color: white;">
         <div class="row">
             <h3 tyle="text-align: center; font-size: larger; padding-bottom: 1rem;">Registration</h3>
             <form method="POST">
                 {% csrf_token %}
-                <div class="form-froup col-lg-auto">
+                <div class="form-froup col-lg-auto" style="margin-top: 1rem;">
                     <label for="inputName" style="padding-right: 0.5rem;">
-                        {{ form.username.label }}
+                        Username
                     </label>
-                    <!--<input type="text" name="username" class="form-control " id="inputName" placeholder="Username"
-                        required>-->
-                    {{ form.username }}
+                    <input type="text" name="username" class="form-control " id="inputName" placeholder="Username"
+                        required>
+
                 </div>
                 <div class="form-froup col-lg-auto">
-                    <label for="inputEmail" style="padding-right: 0.5rem;">
-                        {{ form.email.label }}
+                    <label for="inputEmail" style="padding-right: 3.5rem;">
+                        Email
                     </label>
-                    {{ form.email }}
+                    <input type="text" name="email" class="form-control " id="inputEmail" placeholder="Email" required>
                 </div>
                 <div class="form-froup col-lg-auto">
-                    <label for="inputName" style="padding-right: 0.5rem;">
-                        {{ form.password1.label }}
+                    <label for="inputPass1" style="padding-right: 0.5rem;">
+                        Password
                     </label>
-                    {{ form.password1 }}
+                    <input type="text" name="password1" class="form-control " id="inputPass1" placeholder="Password"
+                        required>
                 </div>
                 <div class="form-froup col-lg-auto">
-                    <label for="inputName" style="padding-right: 0.5rem;">
-                        {{ form.password2.label }}
+                    <label for="inputPass2" style="padding-right: 0.5rem;">
+                        Password
                     </label>
-                    {{ form.password2 }}
+                    <input type="text" name="password2" class="form-control " id="inputPass2"
+                        placeholder="Confirm your password" required>
                 </div>
 
                 {{ form.errors }}
@@ -57,24 +59,18 @@
                 <button type="submit" class="btn btn-primary" name="Sign In" value="Sign In">Submit</button>
             </form>
             <div class="extended_log">
-                <div style="display: inline-block; float: left;">Already registered? <a href="{% url 'user_login' %}" 
+                <div style="display: inline;">Already registered? <a href="{% url 'user_login' %}"
                         class="urls_wind">Log in</a></div>
-                        <div style="display: inline-block;">Forgot your password? <a href="{% url 'user_restore' %}" class="urls_wind">Restore it</a></div>
-    
-                
+                <div style="display: block;">Forgot your password? <a href="{% url 'user_restore' %}" class="urls_wind">Restore it</a></div>
             </div>
 
 
-
-
         </div>
-    </div>
 
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
-        crossorigin="anonymous"></script>
-
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+            crossorigin="anonymous"></script>
 </body>
 
 </html>

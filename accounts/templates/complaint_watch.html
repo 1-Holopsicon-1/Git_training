@@ -2,9 +2,133 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"
+        integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
+        crossorigin="anonymous"></script>
+
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/dropdown.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/switch.css' %}"/>
+
     <title>Title</title>
 </head>
 <body>
+    <form id="form-main" method="POST">
+        {% csrf_token %}
+
+        <label>User: {{ complaint.user }}</label><br>
+        <label>Author: {{ complaint.author }}</label><br>
+        <label>Title</label>
+        <textarea id="title" name="title" rows="1" cols="50" style="resize: none;" disabled>{{ complaint.title }}</textarea>
+        <br>
+        <label>Description</label>
+        <textarea id="description" name="description" rows="4" cols="50" style="resize: none;" disabled>{{ complaint.description }}</textarea>
+        <br>
+        <label>Verdict: </label>
+        <div class="dropdown">
+            <input type="text" id="verdict" value="--" disabled>
+            <div class="dropdown-content">
+                <label id="none" onclick="transfer(this, 'verdict')">--</label>
+                <label id="right-limit" onclick="transfer(this, 'verdict')">Temporary right limit</label>
+                <label id="temp-ban" onclick="transfer(this, 'verdict')">Temporary ban</label>
+                <label id="perm-ban" onclick="transfer(this, 'verdict')">Permanent ban</label>
+            </div>
+        </div>
+        <div id="time-choice" hidden>
+            <br>
+            <div class="alignment">
+                <label>For some time</label>
+                <div class="switch">
+                    <input id="switch-input" type="checkbox" hidden onchange="onTimeTypeChange(this.checked)">
+                    <label for="switch-input">Selection ::after</label>
+                </div>
+                <label>Until some time</label>
+            </div>
+            
+            <div id="until-time" hidden>
+                <input id="until-time-inp" type="date" value="" onchange="
+                if (document.getElementById('accept').hasAttribute('disabled'))
+                document.getElementById('accept').removeAttribute('disabled');">
+            </div>
+            <div id="for-time">
+                <div class="dropdown">
+                    <input type="text" id="for-time-inp" value="--" disabled>
+                    <div class="dropdown-content">
+                        <label id="30m" onclick="transfer(this, 'for-time-inp')">30 minutes</label>
+                        <label id="1h" onclick="transfer(this, 'for-time-inp')">1 hour</label>
+                        <label id="2h" onclick="transfer(this, 'for-time-inp')">2 hours</label>
+                        <label id="4h" onclick="transfer(this, 'for-time-inp')">4 hours</label>
+                        <label id="12h" onclick="transfer(this, 'for-time-inp')">12 hours</label>
+                        <label id="1d" onclick="transfer(this, 'for-time-inp')">1 day</label>
+                        <label id="2d" onclick="transfer(this, 'for-time-inp')">2 days</label>
+                        <label id="5d" onclick="transfer(this, 'for-time-inp')">5 days</label>
+                        <label id="10d" onclick="transfer(this, 'for-time-inp')">10 days</label>
+                        <label id="30d" onclick="transfer(this, 'for-time-inp')">30 days</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <input id="accept" type="submit" value="Accept" disabled>
+        <input id="reject" type="submit" value="Reject">
+        <p></p>
+        <div id="div_messages">
+        </div>
+    </form>
+
+    <script>
+        function transfer(component, to){
+            var choice = document.getElementById(to);
+            choice.value = component.innerHTML;
+            if (to == 'verdict')
+                configure();
+            else if (to == 'for-time-inp'){
+                if (document.getElementById('accept').hasAttribute('disabled'))
+                    document.getElementById('accept').removeAttribute('disabled');
+            }
+        }
+
+        function configure(){
+            var choice = document.getElementById('verdict');
+            var div = document.getElementById('time-choice');
+            if (choice.value == "Temporary right limit" || choice.value == "Temporary ban"){
+                if (div.hasAttribute('hidden'))
+                    div.removeAttribute('hidden');
+                document.getElementById('accept').setAttribute('disabled', 'true');
+            }
+            else{
+                div.setAttribute('hidden', 'true');
+                if (choice.value == "Permanent ban")
+                    if (document.getElementById('accept').hasAttribute('disabled'))
+                        document.getElementById('accept').removeAttribute('disabled');
+                    else
+                        document.getElementById('accept').setAttribute('disabled', 'true');
+            }
+            document.getElementById('until-time-inp').value = "";
+            document.getElementById('for-time-inp').value = "--";
+        }
+
+        function onTimeTypeChange(isChecked){
+            if (isChecked){
+                if (document.getElementById('until-time').hasAttribute('hidden'))
+                    document.getElementById('until-time').removeAttribute('hidden');
+                document.getElementById('for-time').setAttribute('hidden', 'true');
+            }
+            else{
+                if (document.getElementById('for-time').hasAttribute('hidden'))
+                    document.getElementById('for-time').removeAttribute('hidden');
+                document.getElementById('until-time').setAttribute('hidden', 'true');
+            }
+            document.getElementById('until-time-inp').value = "";
+            document.getElementById('for-time-inp').value = "--";
+            document.getElementById('accept').setAttribute('disabled', 'true');
+        }
+    </script>
+    <script src="{% static 'js/complainWatchAjax.js' %}?newversion"></script>
+
+    {% include 'menu.html' %}
 
 </body>
 </html>

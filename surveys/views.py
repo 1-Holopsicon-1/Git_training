@@ -9,15 +9,15 @@ from django.template.defaulttags import register
 from django.urls import reverse
 from django.utils import timezone
 
-from accounts.models import UserProperties
+from accounts.decorators import email_verified, ban_check, limits_check
 from surveys.models import Survey, SurveyAnswer, SurveyQuestion
 
 
 @login_required(login_url='user_login')
+@ban_check(redirect_html='permissionError.html', parameters_permanent={'code': 3}, parameters_temporary={'code': 2})
+@limits_check(redirect_html='permissionError.html', parameters={'code': 1})
+@email_verified(messages=['Your email is not verified'])
 def createSurvey(request):
-    if not UserProperties.objects.get(user=request.user).email_verified:
-        messages.error(request, 'Your email is not verified')
-        return redirect(reverse('user_info') + f'?user={request.user.username}')
 
     if request.is_ajax():
         # <editor-fold desc="CHECKS">
@@ -139,17 +139,14 @@ def createSurvey(request):
     return render(request, 'surveyCreation.html', context)
 
 @login_required(login_url='user_login')
+@ban_check(redirect_html='permissionError.html', parameters_permanent={'code': 3}, parameters_temporary={'code': 2})
+@email_verified(messages=['Your email is not verified'])
 def passSurvey(request):
     survey_url = request.GET.get('survey', None)
     try:
         survey = Survey.objects.get(url=survey_url)
     except:
         return redirect(reverse('main'))
-
-
-    if not UserProperties.objects.get(user=request.user).email_verified:
-        messages.error(request, 'Your email is not verified')
-        return redirect(reverse('user_info') + f'?user={request.user.username}')
 
     if request.is_ajax():
         change = request.POST.get('rating_change', None)
@@ -272,6 +269,8 @@ def passSurvey(request):
     return render(request, 'surveyVoting.html', context)
 
 @login_required(login_url='user_login')
+@ban_check(redirect_html='permissionError.html', parameters_permanent={'code': 3}, parameters_temporary={'code': 2})
+@limits_check(redirect_html='permissionError.html', parameters={'code': 1})
 def editSurvey(request):
     survey = request.GET.get('survey', None)
     try:
@@ -359,9 +358,10 @@ def editSurvey(request):
                 for question in SurveyQuestion.objects.filter(survey=survey):
                     question.delete()
                 survey.rating = 0
-                survey.save()
                 survey.downed.clear()
                 survey.upped.clear()
+                survey.save()
+                i = 0
                 while request.POST.get(f'question{i + 1}', default=None) != None:
                     surveyQuestion = SurveyQuestion(survey=survey, text=request.POST.get(f'question{i + 1}'), multipleChoice=(request.POST.get(f'multichoice{i + 1}')=='true'))
                     surveyQuestion.save()
