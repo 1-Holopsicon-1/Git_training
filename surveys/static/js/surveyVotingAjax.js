@@ -287,6 +287,7 @@ function deleteReplyBox(){
         parent.removeChild(br);
         parent.removeChild(txt);
         parent.removeChild(sendbtn);
+        activeIndex = -1;
     }
 }
 
