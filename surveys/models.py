@@ -13,6 +13,7 @@ class Survey(models.Model):
     rating = models.IntegerField(default=0)
     upped = models.ManyToManyField(User, related_name='upped')
     downed = models.ManyToManyField(User, related_name='downed')
+    participants = models.IntegerField(default=0)
 
 class SurveyQuestion(models.Model):
     multipleChoice = models.BooleanField(default=False)

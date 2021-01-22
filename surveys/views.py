@@ -149,6 +149,7 @@ def passSurvey(request):
         return redirect(reverse('main'))
 
     if request.is_ajax():
+        print(request.POST)
         change = request.POST.get('rating_change', None)
         if change is not None:
             data = {
@@ -202,6 +203,23 @@ def passSurvey(request):
             if survey.isLocked:
                 data['btn_change'] = '0'
             return HttpResponse(json.dumps(data), content_type="application/json")
+        elif (id := request.POST.get('answered', None)) is not None:
+            id = int(id)
+            text = request.POST.get('text')
+            if id == -1:
+                comment = Commentary(survey=survey, text=text, user=User.objects.get(username=request.user.username))
+                comment.save()
+            else:
+                comment = Commentary(parentComment=Commentary.objects.get(id=id), text=text, user=User.objects.get(username=request.user.username))
+                if comment.parentComment.survey is None:
+                    comment.rootComment = comment.parentComment.rootComment
+                else:
+                    comment.rootComment = comment.parentComment
+                comment.save()
+
+            response = HttpResponseRedirect(reverse('survey_pass') + f"?survey={survey_url}")
+            response.status_code = 278
+            return response
 
 
     questions = SurveyQuestion.objects.filter(survey=survey)
@@ -224,7 +242,13 @@ def passSurvey(request):
     rootComments = Commentary.objects.filter(survey=survey).order_by('creationTime')
     comments = []
     for comment in rootComments:
-        childComments = Commentary.objects.filter(rootComment=comment).order_by('creationTime')
+        childComments = []
+        childComments_ = Commentary.objects.filter(rootComment=comment).order_by('creationTime')
+        for comment_ in childComments_:
+            text = comment_.parentComment.text
+            if len(text) > 500:
+                text = text[:500] + "..."
+            childComments.append([comment_, text])
         comments.append([comment, childComments])
 
     context = {
@@ -243,6 +267,8 @@ def passSurvey(request):
                     answer = SurveyAnswer.objects.get(surveyQuestion=questions[i], text=answer)
                     answer.users.add(request.user)
                     answer.save()
+            survey.participants += 1
+            survey.save()
             return redirect(reverse('survey_pass') + f'?survey={survey_url}')
     else:
         answers_stats = []
@@ -254,7 +280,12 @@ def passSurvey(request):
                 for user in answer.users.all():
                     users[i].add(user)
             for answer in answers[i]:
-                answers_stats[i].append([answer.text, answer.users.count(), f'{int(100 * answer.users.count() / len(users[i]))}%'])
+                answered = True
+                try:
+                    answer.users.get(username=request.user.username)
+                except:
+                    answered = False
+                answers_stats[i].append([answer.text, answer.users.count(), f'{int(100 * answer.users.count() / len(users[i]))}%', answered])
 
         context['answers'] = zip(questions, answers_stats)
 
@@ -364,6 +395,8 @@ def editSurvey(request):
             if checked:
                 for question in SurveyQuestion.objects.filter(survey=survey):
                     question.delete()
+                for comment in Commentary.objects.filter(survey=survey):
+                    comment.delete()
                 survey.rating = 0
                 survey.downed.clear()
                 survey.upped.clear()
