@@ -39,7 +39,8 @@ def createSurvey(request):
         if not check_string(description):
             messages.error(request, "Incorrect description")
         if not linkAccess_text.isalnum():
-            messages.error(request, "Link may only contain digits and letters and should not be empty")
+            messages.error(
+                request, "Link may only contain digits and letters and should not be empty")
 
         questionFilled = True
         filled = True
@@ -78,9 +79,11 @@ def createSurvey(request):
         if not questionFilled:
             messages.error(request, "Questions should not be empty")
         if not enoughAnswers:
-            messages.error(request, "Number of answers for each question should be at least 2")
+            messages.error(
+                request, "Number of answers for each question should be at least 2")
         if not different:
-            messages.error(request, "Answers for each question should be different")
+            messages.error(
+                request, "Answers for each question should be different")
         if not filled:
             messages.error(request, "Answers should not be empty")
         if len(messages.get_messages(request)) == 0:
@@ -100,7 +103,6 @@ def createSurvey(request):
                 linkCheck = False
                 messages.error(request, "Survey with such link already exists")
 
-
             if linkCheck:
                 survey = Survey(title=title, description=description, url=linkAccess_text,
                                 isLocked=linkAccess, creator=User.objects.get(username=request.user.username))
@@ -108,11 +110,13 @@ def createSurvey(request):
 
                 i = 0
                 while request.POST.get(f'question{i + 1}', default=None) != None:
-                    surveyQuestion = SurveyQuestion(survey=survey, text=request.POST.get(f'question{i + 1}'), multipleChoice=(request.POST.get(f'multichoice{i + 1}')=='true'))
+                    surveyQuestion = SurveyQuestion(survey=survey, text=request.POST.get(
+                        f'question{i + 1}'), multipleChoice=(request.POST.get(f'multichoice{i + 1}') == 'true'))
                     surveyQuestion.save()
                     for j in range(10):
                         if request.POST.get(f'answer{i + 1}_{j + 1}', default=None) != None:
-                            surveyAnswer = SurveyAnswer(surveyQuestion=surveyQuestion, text=request.POST.get(f'answer{i + 1}_{j + 1}'))
+                            surveyAnswer = SurveyAnswer(
+                                surveyQuestion=surveyQuestion, text=request.POST.get(f'answer{i + 1}_{j + 1}'))
                             surveyAnswer.save()
                         else:
                             break
@@ -137,6 +141,7 @@ def createSurvey(request):
         'answers_len': 5,
     }
     return render(request, 'surveyCreation.html', context)
+
 
 @login_required(login_url='user_login')
 @ban_check(redirect_html='permissionError.html', parameters_permanent={'code': 3}, parameters_temporary={'code': 2})
@@ -207,25 +212,28 @@ def passSurvey(request):
             id = int(id)
             text = request.POST.get('text')
             if id == -1:
-                comment = Commentary(survey=survey, text=text, user=User.objects.get(username=request.user.username))
+                comment = Commentary(survey=survey, text=text, user=User.objects.get(
+                    username=request.user.username))
                 comment.save()
             else:
-                comment = Commentary(parentComment=Commentary.objects.get(id=id), text=text, user=User.objects.get(username=request.user.username))
+                comment = Commentary(parentComment=Commentary.objects.get(
+                    id=id), text=text, user=User.objects.get(username=request.user.username))
                 if comment.parentComment.survey is None:
                     comment.rootComment = comment.parentComment.rootComment
                 else:
                     comment.rootComment = comment.parentComment
                 comment.save()
 
-            response = HttpResponseRedirect(reverse('survey_pass') + f"?survey={survey_url}")
+            response = HttpResponseRedirect(
+                reverse('survey_pass') + f"?survey={survey_url}")
             response.status_code = 278
             return response
-
 
     questions = SurveyQuestion.objects.filter(survey=survey)
     answers = []
     for i in range(len(questions)):
-        answers.append(SurveyAnswer.objects.filter(surveyQuestion=questions[i]))
+        answers.append(SurveyAnswer.objects.filter(
+            surveyQuestion=questions[i]))
 
     participated = False
     for answers_group in answers:
@@ -239,11 +247,13 @@ def passSurvey(request):
         if participated:
             break
 
-    rootComments = Commentary.objects.filter(survey=survey).order_by('creationTime')
+    rootComments = Commentary.objects.filter(
+        survey=survey).order_by('creationTime')
     comments = []
     for comment in rootComments:
         childComments = []
-        childComments_ = Commentary.objects.filter(rootComment=comment).order_by('creationTime')
+        childComments_ = Commentary.objects.filter(
+            rootComment=comment).order_by('creationTime')
         for comment_ in childComments_:
             text = comment_.parentComment.text
             if len(text) > 500:
@@ -258,13 +268,15 @@ def passSurvey(request):
     }
 
     if not participated:
-        context['answers'] = zip(questions, answers, [i + 1 for i in range(len(questions))])
+        context['answers'] = zip(questions, answers, [
+                                 i + 1 for i in range(len(questions))])
         if request.method == 'POST':
             for i in range(len(answers)):
                 answers_i = request.POST.getlist(f'answers_inp{i + 1}')
                 for answer in answers_i:
                     print(answer)
-                    answer = SurveyAnswer.objects.get(surveyQuestion=questions[i], text=answer)
+                    answer = SurveyAnswer.objects.get(
+                        surveyQuestion=questions[i], text=answer)
                     answer.users.add(request.user)
                     answer.save()
             survey.participants += 1
@@ -285,7 +297,8 @@ def passSurvey(request):
                     answer.users.get(username=request.user.username)
                 except:
                     answered = False
-                answers_stats[i].append([answer.text, answer.users.count(), f'{int(100 * answer.users.count() / len(users[i]))}%', answered])
+                answers_stats[i].append([answer.text, answer.users.count(
+                ), f'{int(100 * answer.users.count() / len(users[i]))}%', answered])
 
         context['answers'] = zip(questions, answers_stats)
 
@@ -302,9 +315,11 @@ def passSurvey(request):
     else:
         context['rated'] = 1
 
-    context['old'] = ((timezone.now() - survey.creationTime).days * 24 + (timezone.now() - survey.creationTime).seconds / 3600) >= 12
+    context['old'] = ((timezone.now() - survey.creationTime).days *
+                      24 + (timezone.now() - survey.creationTime).seconds / 3600) >= 12
 
     return render(request, 'surveyVoting.html', context)
+
 
 @login_required(login_url='user_login')
 @ban_check(redirect_html='permissionError.html', parameters_permanent={'code': 3}, parameters_temporary={'code': 2})
@@ -375,15 +390,18 @@ def editSurvey(request):
                 i += 1
 
             if i == 0:
-                messages.error(request, "Number of questions should be at least 1")
+                messages.error(
+                    request, "Number of questions should be at least 1")
             if not questionDifferent:
                 messages.error(request, "Questions should be different")
             if not questionFilled:
                 messages.error(request, "Questions should not be empty")
             if not enoughAnswers:
-                messages.error(request, "Number of answers for each question should be at least 2")
+                messages.error(
+                    request, "Number of answers for each question should be at least 2")
             if not different:
-                messages.error(request, "Answers for each question should be different")
+                messages.error(
+                    request, "Answers for each question should be different")
             if not filled:
                 messages.error(request, "Answers should not be empty")
             if len(messages.get_messages(request)) == 0:
@@ -403,11 +421,13 @@ def editSurvey(request):
                 survey.save()
                 i = 0
                 while request.POST.get(f'question{i + 1}', default=None) != None:
-                    surveyQuestion = SurveyQuestion(survey=survey, text=request.POST.get(f'question{i + 1}'), multipleChoice=(request.POST.get(f'multichoice{i + 1}')=='true'))
+                    surveyQuestion = SurveyQuestion(survey=survey, text=request.POST.get(
+                        f'question{i + 1}'), multipleChoice=(request.POST.get(f'multichoice{i + 1}') == 'true'))
                     surveyQuestion.save()
                     for j in range(10):
                         if request.POST.get(f'answer{i + 1}_{j + 1}', default=None) != None:
-                            surveyAnswer = SurveyAnswer(surveyQuestion=surveyQuestion, text=request.POST.get(f'answer{i + 1}_{j + 1}'))
+                            surveyAnswer = SurveyAnswer(
+                                surveyQuestion=surveyQuestion, text=request.POST.get(f'answer{i + 1}_{j + 1}'))
                             surveyAnswer.save()
                         else:
                             break
@@ -439,17 +459,19 @@ def editSurvey(request):
         'survey': survey,
     }
 
-    context['answers'] = zip(questions, answers, [i + 1 for i in range(len(questions))])
-
+    context['answers'] = zip(questions, answers, [
+                             i + 1 for i in range(len(questions))])
 
     return render(request, 'surveyEditing.html', context)
 
 # <editor-fold desc="UTILITY">
+
+
 def check_string(string):
     return not string.isspace() and len(string) > 0
+
 
 @register.filter
 def get_range(value):
     return range(1, value + 1)
-#</editor-fold>
-
+# </editor-fold>
