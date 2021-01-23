@@ -59,15 +59,16 @@
                 <button type="submit" class="btn btn-primary" name="Sign In" value="Sign In">Submit</button>
             </form>
             <div class="extended_log">
-                <div style="display: inline;">Already registered? <a href="{% url 'user_login' %}"
-                        class="urls_wind">Log in</a></div>
-                <div style="display: block;">Forgot your password? <a href="{% url 'user_restore' %}" class="urls_wind">Restore it</a></div>
+                <div style="display: inline; float: left;">Already registered? <a
+                        href="{% url 'user_login' %}" class="urls_wind">Log in</a></div>
+                <br><div>Forgot your password? <a
+                        href="{% url 'user_restore' %}" class="urls_wind">Restore it</a></div>
             </div>
 
 
         </div>
 
-
+    </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
             crossorigin="anonymous"></script>

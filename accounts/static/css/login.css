@@ -46,9 +46,9 @@ body{
 }
 
 .form-froup {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    justify-content: flex-end;
+    flex-direction: row;
     margin-bottom: 1rem;
 }
 
@@ -56,7 +56,10 @@ body{
     padding-left: 1rem;
 }
 .extended_log {
+    flex-direction: column;
+    display: block;
     justify-content: center;
     float: center;
     display: inline-block;
 }
+
