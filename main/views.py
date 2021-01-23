@@ -18,14 +18,13 @@ def index(request):
                 for answer in SurveyAnswer.objects.filter(surveyQuestion=question):
                     for user in answer.users.all():
                         participants.add(user)
-            context['topSurveys'].append([survey, len(participants)])
-    return render(request, 'index.html', context)
+            context['topSurveys'].append([survey, survey.participants])
+        return render(request, 'index.html', context)
 
 
 def faq(request):
     context = {}
     return render(request, "faq.html", context)
 
-            context['topSurveys'].append([survey, survey.participants])
-    return render(request, 'index.html', context)
+
 
