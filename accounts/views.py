@@ -21,7 +21,7 @@ from django.views.generic import RedirectView
 
 from accounts.decorators import staff_required, ban_check
 from accounts.emailing import get_confirm_email_body, get_password_email_body
-from accounts.forms import RegistrationForm
+from accounts.forms import RegistrationForm, PasswordResetForm
 from accounts.models import UserProperties, Complaint
 from surveyanywhere.settings import EMAIL_HOST_USER
 
@@ -233,17 +233,12 @@ def changePassword(request):
     context = {}
     form = PasswordChangeForm(user)
     if request.method == 'POST':
-        form = PasswordChangeForm(user, request.POST)
+        form = PasswordResetForm(request)
         if form.is_valid():
-            new_password = request.POST['new_password1']
-            if not check_password(new_password, user.password):
-                user.set_password(new_password)
-                user.save()
-                logout(request)
-                messages.info(request, 'Password was updated')
-                return HttpResponseRedirect(reverse('user_login'))
-            else:
-                messages.error(request, 'New password is the same as the old one')
+            form.save()
+            logout(request)
+            messages.info(request, 'Password was updated')
+            return HttpResponseRedirect(reverse('user_login'))
     context['form'] = form
 
     return render(request, 'password_reset.html', context)

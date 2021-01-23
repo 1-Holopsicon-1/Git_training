@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth import password_validation
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
@@ -95,3 +96,59 @@ class RegistrationForm:
             return False
         return True
 
+class PasswordResetForm:
+    error_messages = {
+        'password_old_error': 'Old password is incorrect',
+        'password_error': 'Password is incorrect or empty',
+        'password_mismatch': 'The two passwords do not match',
+        'password_collision': 'New password is the same as the old one',
+    }
+
+    def __init__(self, request=None):
+        self.check = (request is not None)
+        self.data = {}
+        self.request = request
+        if self.check:
+            self.data['old_password'] = request.POST.get('old_password', '')
+            self.data['password1'] = request.POST.get('password1', None)
+            self.data['password2'] = request.POST.get('password2', None)
+
+    def is_valid(self, send_errors=True):
+        errors = []
+        if not self.check:
+            return False
+
+        user = None
+        try:
+            user = User.objects.get(username=self.request.user.username)
+        except:
+            return False
+
+        if self.data['password1'] != self.data['password2']:
+            errors.append(self.error_messages['password_mismatch'])
+        elif self.data['password1'] is None or not self.data['password1']:
+            errors.append(self.error_messages['password_error'])
+        else:
+            try:
+                password_validation.validate_password(self.data['password1'])
+            except ValidationError as v_errors:
+                for error in v_errors:
+                    errors.append(error)
+            else:
+                if not check_password(self.data['old_password'], user.password):
+                    errors.append(self.error_messages['password_old_error'])
+                elif self.data['old_password'] == self.data['password1']:
+                    errors.append(self.error_messages['password_collision'])
+
+        if len(errors) > 0:
+            if send_errors:
+                for error in errors:
+                    messages.error(self.request, error)
+            return False
+        return True
+
+    def save(self):
+        if self.is_valid(send_errors=False):
+            user = User.objects.get(username=self.request.user.username)
+            user.set_password(self.data['password1'])
+            user.save()
