@@ -10,6 +10,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
     {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/comments.css' %}" />
+    <script src="{% static 'js/surveyVotingAjax.js' %}"></script>
     <title>Title</title>
     <link rel="stylesheet" type="text/css" href="{% static 'css/menu_style.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/vote_surv.css' %}" />
@@ -86,6 +88,25 @@
             {% endif %}
         </form>
         <br>
+        <label>{{survey.title}}</label>
+        <br>
+        <label>{{survey.description}}</label>
+        <br>
+        {% for question, answer_group in answers %}
+        <p></p>
+        <label>{{question.text}}</label>
+        <br>
+        {% for text, count, percentage, answered in answer_group %}
+        {% if answered %}
+        <label style="font-weight: bold;">{{ text }} {{ count }} {{ percentage }}</label>
+        {% else %}
+        <label>{{ text }} {{ count }} {{ percentage }}</label>
+        {% endif %}
+        <br>
+        {% endfor %}
+        {% endfor %}
+        {% endif %}
+        >>>>>>> origin/dj_upd
 
         <div class="container" style="color: white;">
             <div class="main">
@@ -104,14 +125,14 @@
                                 {% for answer in answer_group %}
                                 {% for elem in answer %}
                                 <label>{{ elem }}</label>
-                            
+
                                 {% endfor %}
                                 <br>
                                 {% endfor %}
                             </div>
-                                {% endfor %}
-                                {% endif %}
-                            
+                            {% endfor %}
+                            {% endif %}
+
 
                         </div>
                     </div>
@@ -151,9 +172,61 @@
 
 
     </div>
+    <form id="form-comments" action="POST">
+        {% csrf_token %}
+
+        <h4>Comments</h4>
+        <div>
+            {% for comment, childComments in comments %}
+            <div class="commentBody">
+                <a href="{% url 'user_info' %}?user={{ comment.user.username }}">{{comment.user.username}}</a>
+                <label>{{ comment.creationTime|date:"H:i d.m.Y" }}</label>
+                <input id="commentReplyBtn_{{comment.id}}" class="commentReply" type="button" value="Reply"
+                    onclick="createReplyBox({{ comment.id }}, {{ comment.id }}, `{% url 'user_info' %}?user={{ comment.user.username }}`, `{{ comment.user.username }}`, `{{ comment.creationTime|date:'H:i d.m.Y' }}`)">
+                <br>
+                <label>{{ comment.text }}</label>
+            </div>
+
+            {% for comment_, shortParentText in childComments %}
+            <p></p>
+            <div class="commentBody commentBodyMargin">
+                <a href="{% url 'user_info' %}?user={{ comment_.user.username }}">{{comment_.user.username}}</a>
+                <label>{{ comment_.creationTime|date:"H:i d.m.Y" }}</label>
+                <label style="color: dimgray;">in reply to</label>
+                <div class="commentLinkRef">
+                    <div class="commentReference">
+                        <div class="commentRefBody">
+                            <div class="commentRefCreation">
+                                <a
+                                    href="{% url 'user_info' %}?user={{ comment_.parentComment.user.username }}">{{comment_.parentComment.user.username}}</a>
+                                <label>{{ comment_.parentComment.creationTime|date:"H:i d.m.Y" }}</label>
+                            </div>
+                            <div class="commentRefText">
+                                <label>{{ shortParentText }}</label>
+                            </div>
+                        </div>
+                    </div>
+                    <label class="commentLink">{{ comment_.parentComment.user.username }}</button>
+                </div>
+                <input id="commentReplyBtn_{{comment_.id}}" class="commentReply" type="button" value="Reply"
+                    onclick="createReplyBox({{ comment.id }}, {{ comment_.id }}, `{% url 'user_info' %}?user={{ comment_.user.username }}`, `{{ comment_.user.username }}`, `{{ comment_.creationTime|date:'H:i d.m.Y' }}`)">
+                <br>
+                <label>{{ comment_.text }}</label>
+            </div>
+            {% endfor %}
+            <section id="commentReplySection_{{comment.id}}" style="margin-left: 50px;">
+                <br>
+            </section>
+            {% endfor %}
+            <textarea id="commentTxt" rows=2 cols=50 style="resize: none;"
+                oninput="updateSendBtn(this, 'commentSend')"></textarea>
+            <input id="commentSend" type="button" value="Send" disabled
+                onclick="event.preventDefault();sendComment(-1, commentTxt);">
+        </div>
+    </form>
 
 
-    <script src="{% static 'js/surveyVotingAjax.js' %}"></script>
+    >>>>>>> origin/dj_upd
 </body>
 
 </html>
