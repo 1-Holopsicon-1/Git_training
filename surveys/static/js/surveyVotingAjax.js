@@ -1,6 +1,8 @@
-const form_rating = document.getElementById("form-rating");
+const form_rating = document.getElementById('form-rating');
 const form_lock = document.getElementById("form-lock");
 const form_comments = document.getElementById("form-comments");
+
+console.log(form_rating);
 
 const csrf = document.getElementsByName('csrfmiddlewaretoken');
 const url = document.URL;
@@ -199,23 +201,23 @@ function update_buttons(state, count_like, count_dislike){
         button_like.value = `Like (${count_like})`;
         button_like.style = "background-color: rgb(50, 255, 50);";
         button_dislike.value = `Dislike (${count_dislike})`;
-        button_dislike.style = "background-color: white;";
+        button_dislike.style = "background-color: #2E8BC0;";
     }
     else if (state == '0'){
         button_like.value = `Like (${count_like})`;
-        button_like.style = "background-color: white;";
+        button_like.style = "background-color: #2E8BC0;";
         button_dislike.value = `Dislike (${count_dislike})`;
-        button_dislike.style = "background-color: white;";
+        button_dislike.style = "background-color: #2E8BC0;";
     }
     else{
         button_like.value = `Like (${count_like})`;
-        button_like.style = "background-color: white;";
+        button_like.style = "background-color: #2E8BC0;";
         button_dislike.value = `Dislike (${count_dislike})`;
         button_dislike.style = "background-color: rgb(255, 50, 50);";
     }
 }
 
-$("#form-rating").on('submit', function(e){
+form_rating.addEventListener("submit", function(e){
     e.preventDefault();
 })
 

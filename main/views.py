@@ -18,7 +18,7 @@ def index(request):
                     for user in answer.users.all():
                         participants.add(user)
             context['topSurveys'].append([survey, survey.participants])
-        return render(request, 'index.html', context)
+    return render(request, 'index.html', context)
 
 
 def faq(request):

@@ -11,7 +11,6 @@
         integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/comments.css' %}" />
-    <script src="{% static 'js/surveyVotingAjax.js' %}"></script>
     <title>Title</title>
     <link rel="stylesheet" type="text/css" href="{% static 'css/menu_style.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/vote_surv.css' %}" />
@@ -190,7 +189,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <label class="commentLink">{{ comment_.parentComment.user.username }}</button>
+                                        <label class="commentLink">{{ comment_.parentComment.user.username }}</label>
                                     </div>
                                     <input id="commentReplyBtn_{{comment_.id}}" class="commentReply" type="button"
                                         value="Reply"
@@ -214,10 +213,8 @@
             </div>
         </div>
     </div>
-
-    <script src="{% static 'js/surveyVotingAjax.js' %}"></script>
-    <script src="{% static 'js/surveyEditingAjax.js' %}"></script>
     <script src="{% static 'js/surveyHandler.js' %}"></script>
+    <script src="{% static 'js/surveyVotingAjax.js' %}"></script>
 
 </body>
 
