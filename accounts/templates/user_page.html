@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/profile.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/menu_style.css' %}" />
 
-    <title>Title</title>
+    <title>User page</title>
 </head>
 
 <body>
@@ -55,27 +55,24 @@
                         <div class="title_surv">
                             <h7>Your surveys</h7>
                         </div>
-                        <div style="display: inline;">
+                            <h10> </h10>
+                        <div>
+                        </div>
+                        <div style="display: inline-table; padding-top: 1rem">
 
-                            <ul class="table_title col-lg-4">
-                                <li>
-                                    Name of surv
-                                </li>
-                                <li>
-                                    Rating
-                                </li>
-                                <li>
-                                    Participants
-                                </li>
+                                    {% for survey, participants in surveys %}
+                                    <ul class="info col-lg-8">
+                                        <div class="name_head">
+                                            <li><h10><a href="{% url 'survey_pass'%}?survey={{survey.url}}">{{survey.title}}</a></h10></li>
+                                        </div>
+                                        <span class="out"><li>raiting: {{survey.rating}}    Participated: {{participants}}</li></span>
+                                        <span class="out" style="margin-top: 1rem"><li>{{survey.description}}</li></span>
 
-                            </ul>
-                            {% for survey, participants in surveys %}
-                            <ul class="table_title col-lg-4">
-                                <li><a href="{% url 'survey_pass'%}?survey={{survey.url}}">{{survey.title}}</a></li>
-                                <li>{{survey.rating}}</li>
-                                <li>{{participants}}</li>
-                            </ul>
-                            {% endfor %}
+                                    </ul>
+
+                                    {% endfor %}
+
+
                         </div>
                         {% else %}
                         <a href="{% url 'create_complaint' %}?user={{username}}"><input id="complain_btn" type="button"
