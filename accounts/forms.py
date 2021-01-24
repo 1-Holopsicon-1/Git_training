@@ -151,7 +151,6 @@ class PasswordResetForm:
         if self.is_valid(send_errors=False):
             user = User.objects.get(username=self.request.user.username)
             user.set_password(self.data['password1'])
-
             user.save()
 
     def email_check(self, email: str):

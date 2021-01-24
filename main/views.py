@@ -12,7 +12,6 @@ def index(request):
         surveys = Survey.objects.filter(isLocked=False).order_by('-rating', '-participants', '-creationTime', 'title')[:5]
         context['topSurveys'] = []
         for survey in surveys:
-
             participants = set()
             for question in SurveyQuestion.objects.filter(survey=survey):
                 for answer in SurveyAnswer.objects.filter(surveyQuestion=question):
@@ -25,6 +24,5 @@ def index(request):
 def faq(request):
     context = {}
     return render(request, "faq.html", context)
-
 
 
