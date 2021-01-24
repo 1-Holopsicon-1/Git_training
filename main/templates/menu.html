@@ -20,6 +20,9 @@
     <li>
         <a href="{% url 'survey_creation' %}">Create survey</a>
     </li>
+    <li>
+        <a href="{% url 'surveys' %}">Show surveys</a>
+    </li>
     {% endif %}
     {% if request.user.is_staff and checking_complaints != 1 %}
     <li>
