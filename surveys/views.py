@@ -418,6 +418,7 @@ def editSurvey(request):
                 survey.rating = 0
                 survey.downed.clear()
                 survey.upped.clear()
+                survey.participants = 0
                 survey.save()
                 i = 0
                 while request.POST.get(f'question{i + 1}', default=None) != None:

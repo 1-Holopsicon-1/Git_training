@@ -19,7 +19,7 @@ from django.urls import path
 from accounts.views import authentication, register, deauthentication, restore_access, restore_access_check, \
     restore_access_main, registerConfirm, sendEmail, userInfo, changePassword, complaint_check, createComplaint, \
     complaintInfo
-from main.views import index, faq
+from main.views import index, faq, surveys
 from surveys.views import createSurvey, passSurvey, editSurvey
 
 urlpatterns = [
@@ -41,5 +41,6 @@ urlpatterns = [
     path('surveys/create', createSurvey, name='survey_creation'),
     path('surveys/edit', editSurvey, name='survey_edit'),
     path('surveys/survey', passSurvey, name='survey_pass'),
+    path('surveys/', surveys, name='surveys'),
     path('main/faq/', faq, name='faq'),
 ]
