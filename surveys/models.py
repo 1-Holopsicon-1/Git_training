@@ -13,6 +13,7 @@ class Survey(models.Model):
     rating = models.IntegerField(default=0)
     upped = models.ManyToManyField(User, related_name='upped')
     downed = models.ManyToManyField(User, related_name='downed')
+    participants = models.IntegerField(default=0)
 
 class SurveyQuestion(models.Model):
     multipleChoice = models.BooleanField(default=False)
@@ -23,3 +24,11 @@ class SurveyAnswer(models.Model):
     surveyQuestion = models.ForeignKey(SurveyQuestion, on_delete=models.CASCADE, default=None)
     users = models.ManyToManyField(User)
     text = models.CharField(max_length=255, default='')
+
+class Commentary(models.Model):
+    creationTime = models.DateTimeField(default=timezone.now)
+    survey = models.ForeignKey(Survey, null=True, on_delete=models.CASCADE, default=None)
+    rootComment = models.ForeignKey("Commentary", related_name="root", null=True, on_delete=models.CASCADE, default=None)
+    parentComment = models.ForeignKey("Commentary", related_name="parent", null=True, on_delete=models.CASCADE, default=None)
+    text = models.CharField(max_length=255, default='')
+    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, default=None)

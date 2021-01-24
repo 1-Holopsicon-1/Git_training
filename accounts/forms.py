@@ -152,3 +152,19 @@ class PasswordResetForm:
             user = User.objects.get(username=self.request.user.username)
             user.set_password(self.data['password1'])
             user.save()
+
+    def email_check(self, email: str):
+        if email is None:
+            return False
+        if email.count('@') != 1:
+            return False
+        if email.index('@') == 0:
+            return False
+        if email.count('.', email.index('@')) != 1:
+            return False
+        if email[-1] == '.':
+            return False
+        if email.index('.', email.index('@')) - email.index('@') == 1:
+            return False
+        return True
+
