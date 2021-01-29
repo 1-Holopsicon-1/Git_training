@@ -22,6 +22,7 @@
         {% if notPassed %}
         <form name="form" method="POST" id="form-main">
             {% csrf_token %}
+
             {% if survey.creator != None %}
             <div class="hi">
                 <label>Creator: </label>
@@ -73,7 +74,7 @@
                 </div>
             </div>
         </form>
-        {% else %}
+    {% else %}
 
 
         <br>
@@ -111,18 +112,21 @@
                             <label class="block">{{survey.description}}</label>
                             <br>
                             {% for question, answer_group in answers %}
-                            <p></p>
-                            <div class="que">
-                                <h4 style="margin-bottom:0% ; margin-top: 4rem;"><label>{{question.text}}</label></h4>
-                                <br>
-                                {% for answer in answer_group %}
-                                {% for elem in answer %}
-                                <label>{{ elem }}</label>
-                                {% endfor %}
-                                <br>
-                                {% endfor %}
-                            </div>
+                                <p></p>
+                                <div class="que">
+                                    <h4 style="margin-bottom:0% ; margin-top: 4rem;"><label>{{question.text}}</label></h4>
+                                    <br>
+                                    {% for text, count, percentage, answered in answer_group %}
+                                        {% if answered %}
+                                            <label  style="font-weight: bold;">{{ text }} {{ count }} {{ percentage }}</label>
+                                        {% else %}
+                                            <label>{{ text }} {{ count }} {{ percentage }}</label>
+                                        {% endif %}
+                                        <br>
+                                    {% endfor %}
+                                </div>
                             {% endfor %}
+
                             {% endif %}
 
 
@@ -159,14 +163,19 @@
                 <p></p>
                 <div id="div_messages">
                 </div>
+
             </div>
+
         </div>
+    </div>
+
 
 
 
         <br>
 
     </div>
+
     <div class="container" style="color: white;">
         <div class="main">
             <div class="row">

@@ -18,7 +18,7 @@
 }
 
 .commentRefBody{
-    background-color: black;
+    background-color: #145DA0;
     border-color: black;
     border-width: 1px;
     border-radius: 5px;
@@ -38,7 +38,7 @@
 }
 
 .commentLinkRef .commentLink {
-    color: dimgray;
+    color: #A9A9A9;
 }
 
 .commentLinkRef:hover .commentReference{

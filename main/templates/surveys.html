@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    {% load static %}
+</head>
+<body>
+<p>All surveys</p>
+    <table>
+        <tr>
+            <td>Title</td>
+            <td>Rating</td>
+            <td>Participants</td>
+        </tr>
+        {% for survey, participants in surveys %}
+        <tr>
+            <td><a href="{% url 'survey_pass'%}?survey={{survey.url}}">{{survey.title}}</a></td>
+            <td>{{survey.rating}}</td>
+            <td>{{participants}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+{% include 'menu.html' %}
+</body>
+</html>
