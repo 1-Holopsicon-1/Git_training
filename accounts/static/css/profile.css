@@ -101,12 +101,13 @@
     color: #ffffff;
 }
 
-ul.table_title li {
+li {
     display: inline-flex;
     flex-direction: column;
     margin-right: 5px;
     list-style-type: none;
     padding: 3px;
+    list-style-type: none;
 }
 
 .info_out {
@@ -143,4 +144,8 @@ ul.table_title li {
     padding-right: 2rem;
     border-radius: 20px;
     background-color: #2E8BC0;
+    width: 50%;
+}
+.name_head{
+    margin-bottom: 1rem;
 }
