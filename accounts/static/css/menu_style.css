@@ -14,10 +14,11 @@ button {
 }
 
 a {
-    color: #ffffff !important;
     text-decoration: none
 }
-
+.nav-link{
+    color: #ffffff !important;
+}
 .navbar-dark {
     background-color: #2E8BC0;
     text-align: center;
