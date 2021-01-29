@@ -1,32 +1,48 @@
-<br>
-<hr>
-<h3>Site navigation</h3>
-<ul>
-    <li>
-        <a href="{% url 'main' %}">Main page</a>
-    </li>
-    {% if not request.user.is_authenticated %}
-    {% if auth_state != 1 %}
-    <li>
-        <a href="{% url 'user_register' %}">Registration</a>
-    </li>
-    {% endif %}
-    {% if auth_state != 2 %}
-    <li>
-        <a href="{% url 'user_login' %}">Authorization</a>
-    </li>
-    {% endif %}
-    {% else %}
-    <li>
-        <a href="{% url 'survey_creation' %}">Create survey</a>
-    </li>
-    <li>
-        <a href="{% url 'surveys' %}">Show surveys</a>
-    </li>
-    {% endif %}
-    {% if request.user.is_staff and checking_complaints != 1 %}
-    <li>
-        <a href="{% url 'complaints_check' %}">Check complaints</a>
-    </li>
-    {% endif %}
-</ul>
+<nav class="navbar navbar-expand-lg navbar-light" style="background-color: #2E8BC0;">
+    <div class="container-fluid">
+        <a href="{% url 'main' %}"></a>
+        <h3 class="name" style="color: aliceblue;">SurveyAnyWhere</h3>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link" href="{% url 'main' %}">
+                        Main page
+                    </a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'survey_creation' %}">
+                        Create survey
+                    </a></li>
+                {% if request.user.is_authenticated %}
+                {% if auth_state != 1 %}
+                <li class="nav-item"><a class="nav-link" href="{% url 'user_info' %}?user={{ request.user.username }}">
+                        Profile
+                    </a></li>
+                {% endif %}
+                {%else%}
+                {% if auth_state != 2 %}
+                <li class="nav-item"><a class="nav-link" href="{% url 'user_register' %}">
+                        Registration
+                    </a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'user_login' %}">
+                        Login
+                    </a></li>
+                {% endif %}
+                {% endif %}
+
+
+                <li class="nav-item"><a class="nav-link" href="{% url 'faq' %}">
+                        FAQ
+                    </a></li>
+
+
+                {% if request.user.is_staff and checking_complaints != 1 %}
+                <li class="nav-item"><a class="nav-link" href="{% url 'complaints_check' %}">
+                        Check complaints
+                    </a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
