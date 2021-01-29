@@ -99,20 +99,19 @@
                             {% for question, answer_group in answers %}
                                 <p></p>
                                 <div class="que">
-                                <h4 style="margin-bottom:0% ; margin-top: 4rem;"><label>{{question.text}}</label></h4>
-                                <br>
-                                {% for text, count, percentage, answered in answer_group %}
-                                    {% if answered %}
-                                        <label  style="font-weight: bold;">{{ text }} {{ count }} {{ percentage }}</label>
-                                    {% else %}
-                                        <label>{{ text }} {{ count }} {{ percentage }}</label>
-                                    {% endif %}
+                                    <h4 style="margin-bottom:0% ; margin-top: 4rem;"><label>{{question.text}}</label></h4>
                                     <br>
-                                {% endfor %}
+                                    {% for text, count, percentage, answered in answer_group %}
+                                        {% if answered %}
+                                            <label  style="font-weight: bold;">{{ text }} {{ count }} {{ percentage }}</label>
+                                        {% else %}
+                                            <label>{{ text }} {{ count }} {{ percentage }}</label>
+                                        {% endif %}
+                                        <br>
+                                    {% endfor %}
                                 </div>
                             {% endfor %}
                         {% endif %}
-
                     </div>
                 </div>
             </div>
@@ -171,40 +170,40 @@
                                     <label>{{ comment.text }}</label>
                                 </div>
 
-                {% for comment_, shortParentText in childComments %}
-                    <p></p>
-                    <div class="commentBody commentBodyMargin">
-                        <a href="{% url 'user_info' %}?user={{ comment_.user.username }}">{{comment_.user.username}}</a>
-                        <label>{{ comment_.creationTime|date:"H:i d.m.Y" }}</label>
-                        <label style="color: dimgray;">in reply to</label>
-                        <div class="commentLinkRef">
-                            <div class="commentReference">
-                                <div class="commentRefBody">
-                                    <div class="commentRefCreation">
-                                        <a href="{% url 'user_info' %}?user={{ comment_.parentComment.user.username }}">{{comment_.parentComment.user.username}}</a>
-                                        <label>{{ comment_.parentComment.creationTime|date:"H:i d.m.Y" }}</label>
-                                    </div>
-                                    <div class="commentRefText">
-                                        <label>{{ shortParentText }}</label>
-                                    </div>
-                                </div>
+                                    {% for comment_, shortParentText in childComments %}
+                                        <p></p>
+                                        <div class="commentBody commentBodyMargin">
+                                            <a href="{% url 'user_info' %}?user={{ comment_.user.username }}">{{comment_.user.username}}</a>
+                                            <label>{{ comment_.creationTime|date:"H:i d.m.Y" }}</label>
+                                            <label style="color: dimgray;">in reply to</label>
+                                            <div class="commentLinkRef">
+                                                <div class="commentReference">
+                                                    <div class="commentRefBody">
+                                                        <div class="commentRefCreation">
+                                                            <a href="{% url 'user_info' %}?user={{ comment_.parentComment.user.username }}">{{comment_.parentComment.user.username}}</a>
+                                                            <label>{{ comment_.parentComment.creationTime|date:"H:i d.m.Y" }}</label>
+                                                        </div>
+                                                        <div class="commentRefText">
+                                                            <label>{{ shortParentText }}</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <label class="commentLink">{{ comment_.parentComment.user.username }}</button>
+                                            </div>
+                                            <input id="commentReplyBtn_{{comment_.id}}" class="commentReply" type="button" value="Reply" onclick="createReplyBox({{ comment.id }}, {{ comment_.id }}, `{% url 'user_info' %}?user={{ comment_.user.username }}`, `{{ comment_.user.username }}`, `{{ comment_.creationTime|date:'H:i d.m.Y' }}`)">
+                                            <br>
+                                            <label>{{ comment_.text }}</label>
+                                        </div>
+                                    {% endfor %}
+                                    <section id="commentReplySection_{{comment.id}}" style="margin-left: 50px;">
+                                        <br>
+                                    </section>
+                                {% endfor %}
+                                <textarea id="commentTxt" rows=2 cols=50 style="resize: none;" oninput="updateSendBtn(this, 'commentSend')"></textarea>
+                                <input id="commentSend" type="button" value="Send" disabled onclick="event.preventDefault();sendComment(-1, commentTxt);">
                             </div>
-                            <label class="commentLink">{{ comment_.parentComment.user.username }}</button>
-                        </div>
-                        <input id="commentReplyBtn_{{comment_.id}}" class="commentReply" type="button" value="Reply" onclick="createReplyBox({{ comment.id }}, {{ comment_.id }}, `{% url 'user_info' %}?user={{ comment_.user.username }}`, `{{ comment_.user.username }}`, `{{ comment_.creationTime|date:'H:i d.m.Y' }}`)">
-                        <br>
-                        <label>{{ comment_.text }}</label>
+                        </form>
                     </div>
-                {% endfor %}
-                <section id="commentReplySection_{{comment.id}}" style="margin-left: 50px;">
-                    <br>
-                </section>
-            {% endfor %}
-            <textarea id="commentTxt" rows=2 cols=50 style="resize: none;" oninput="updateSendBtn(this, 'commentSend')"></textarea>
-            <input id="commentSend" type="button" value="Send" disabled onclick="event.preventDefault();sendComment(-1, commentTxt);">
-        </div>
-    </form>
-        </div>
                 </div>
             </div>
         </div>
