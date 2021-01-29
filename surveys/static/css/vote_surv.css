@@ -1,24 +1,25 @@
 .container {
-    display: inline-flex;
+    display: block;
     font-size: x-large;
     color: #ffffff;
     float: left;
     margin-left: 2rem;
-    flex-direction: row;
-    
+    flex-direction: column;
+    margin: auto;
+    justify-content: left;
     
 }   
 .main {
-    display: inline-flex;
+    display: inline-block;
     flex-direction: row;
     /*margin-top: 6rem;*/
 }
 .row {
-    display: inline-flex;
-    
+    display: block;
     border-radius: 20px;
     padding: 1rem;
     float: left;
+    
 }
 
 .form-froup {
@@ -30,6 +31,7 @@
     flex-direction: row;
 }
 .hi {
+    /*position: absolute;*/
     font-size: x-large; 
     white-space: nowrap;
     background-color: #2E8BC0;
@@ -38,7 +40,7 @@
     color: #ffffff;
     margin-left: 6.5rem;
     text-align: center;
-    margin-top: 1rem;
+    
     float: left;
     
 }
@@ -92,5 +94,12 @@
     padding: 1rem;
     padding-top: 0rem;
     color: black;
+    border-radius: 20px;
+}
+a{
+    color: white !important;
+}
+
+textarea{
     border-radius: 20px;
 }

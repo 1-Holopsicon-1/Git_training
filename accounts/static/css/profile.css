@@ -7,7 +7,7 @@
     display: block;
     margin: 0px;
     width: auto;
-    margin-left: auto;
+    margin-left: 0px;
     float: left;
     justify-content: left;
 }
@@ -148,4 +148,7 @@ li {
 }
 .name_head{
     margin-bottom: 1rem;
+}
+a{
+    color: white !important;
 }

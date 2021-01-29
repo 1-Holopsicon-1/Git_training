@@ -18,18 +18,18 @@
 
 <body>
     {% include 'menu.html' %}
-    <div style="justify-content: center;">
+    <div>
         {% if notPassed %}
         <form name="form" method="POST" id="form-main">
             {% csrf_token %}
             {% if survey.creator != None %}
             <div class="hi">
+                <label>Creator: </label>
                 <a href="{% url 'user_info' %}?user={{ survey.creator.username }}">{{survey.creator.username}}</a>
                 {% else %}
                 <label>Creator was deleted</label>
                 {% endif %}
             </div>
-            <label>Creator: </label>
 
             {% if survey.creator.username == request.user.username %}
             {% if survey.isLocked %}
@@ -39,42 +39,46 @@
             {% endif %}
             {% endif %}
             <br>
-            <label>{{survey.title}}</label>
-            <br>
-            <label>{{survey.description}}</label>
-            <br>
+            <div class="container" style="color: white;">
+                <div class="main">
+                    <div class="row">
+                        <div class=" frame">
+                            <div class="info">
+                                <label class="block" style="text-align: center;">{{survey.title}}</label>
+                                <br>
+                                <label class="block" style="text-align: center;">{{survey.description}}</label>
+                                {% for question, answer_group, index in answers %}
+                                <div class="que" style="margin-bottom: 1rem;">
+                                    <label style="margin-bottom:0% ; margin-top: 1rem;">{{question.text}}</label>
+                                    <br>
+                                    {% for answer in answer_group %}
+                                    {% if question.multipleChoice %}
+                                    <input name="answers_inp{{index}}" type="checkbox"
+                                        id="answer_{{index}}_{{answer.text}}" value="{{answer.text}}" oninput="check()">
+                                    {% else %}
+                                    <input name="answers_inp{{index}}" type="radio"
+                                        id="answer_{{index}}_{{answer.text}}" value="{{answer.text}}" oninput="check()">
+                                    {% endif %}
+                                    <label>{{ answer.text }}</label>
+                                    <br>
+                                    {% endfor %}
+                                </div>
+                                {% endfor %}
 
-            {% for question, answer_group, index in answers %}
-            <label>{{question.text}}</label>
-            <br>
-            {% for answer in answer_group %}
-            {% if question.multipleChoice %}
-            <input name="answers_inp{{index}}" type="checkbox" id="answer_{{index}}_{{answer.text}}"
-                value="{{answer.text}}" oninput="check()">
-            {% else %}
-            <input name="answers_inp{{index}}" type="radio" id="answer_{{index}}_{{answer.text}}"
-                value="{{answer.text}}" oninput="check()">
-            {% endif %}
-            <label>{{ answer.text }}</label>
-            <br>
-            {% endfor %}
-            {% endfor %}
-
-            <input id="vote_btn" type="submit" value="Vote" disabled>
+                                <input id="vote_btn" type="submit" value="Vote" disabled>
+                            </div>
+                        </div>
+                        <br>
+                    </div>
+                </div>
+            </div>
         </form>
         {% else %}
 
-        {% if survey.creator != None %}
 
-        <div class="hi">
-            <label>Creator: </label>
-            <a href="{% url 'user_info' %}?user={{ survey.creator.username }}">{{survey.creator.username}}</a>
-        </div>
-            {% else %}
-        
-        <h6 class="hi col-lg-3">Creator was deleted</h6>
-        {% endif %}
+        <br>
         <form name="form" method="POST" id="form-lock">
+
             {% csrf_token %}
             {% if survey.creator.username == request.user.username %}
             {% if survey.isLocked %}
@@ -84,10 +88,21 @@
             {% endif %}
             {% endif %}
         </form>
-        <br>
 
+        <br>
         <div class="container" style="color: white;">
             <div class="main">
+                {% if survey.creator != None %}
+
+                <div class="hi">
+                    <label>Creator: </label>
+                    <a href="{% url 'user_info' %}?user={{ survey.creator.username }}">{{survey.creator.username}}</a>
+                </div>
+                {% else %}
+
+                <h6 class="hi">Creator was deleted</h6>
+                <br>
+                {% endif %}
                 <div class="row">
                     <div class=" frame">
                         <div class="info col-lg-auto">
@@ -110,43 +125,46 @@
                             {% endfor %}
                             {% endif %}
 
+
                         </div>
                     </div>
                 </div>
-                
-                <div class="row">
-                    <form id="form-rating" method="POST">
-                        {% csrf_token %}
-                        {% if rated == 1 %}
-                        <input class="btn_l btn" id="like_btn" type="submit" value="Like ({{ survey.upped.count }})"
-                            style="background-color: rgb(50, 255, 50);">
-                        {% else %}
-                        <input class="btn_l btn" id="like_btn" type="submit" value="Like ({{ survey.upped.count }})"
-                            style="background-color: #2E8BC0; ">
-                        {% endif %}
+            </div>
+        </div>
+        <br>
+        <div class="container">
+            {% if survey.creator.username == request.user.username and not old %}
+            <a href="{% url 'survey_edit' %}?survey={{survey.url}}"><input type="button" value="Edit"></a>
+            {% endif %}
+            <div class="row" style="display: block; float: left; justify-content: left;">
+                <form id="form-rating" method="POST">
+                    {% csrf_token %}
+                    {% if rated == 1 %}
+                    <input class="btn_l btn" id="like_btn" type="submit" value="Like ({{ survey.upped.count }})"
+                        style="background-color: rgb(50, 255, 50);">
+                    {% else %}
+                    <input class="btn_l btn" id="like_btn" type="submit" value="Like ({{ survey.upped.count }})"
+                        style="background-color: #2E8BC0; ">
+                    {% endif %}
 
 
-                        {% if rated == -1 %}
-                        <input class="btn_l btn" id="dislike_btn" type="submit"
-                            value="Dislike ({{ survey.downed.count }})" style="background-color: rgb(255, 50, 50);">
-                        {% else %}
-                        <input class="btn_l btn" id="dislike_btn" type="submit"
-                            value="Dislike ({{ survey.downed.count }})" style="background-color: #2E8BC0; ">
-                        {% endif %}
-                    </form>
-                    <p></p>
-                    <div id="div_messages">
-                    </div>
+                    {% if rated == -1 %}
+                    <input class="btn_l btn" id="dislike_btn" type="submit" value="Dislike ({{ survey.downed.count }})"
+                        style="background-color: rgb(255, 50, 50);">
+                    {% else %}
+                    <input class="btn_l btn" id="dislike_btn" type="submit" value="Dislike ({{ survey.downed.count }})"
+                        style="background-color: #2E8BC0; ">
+                    {% endif %}
+                </form>
+                <p></p>
+                <div id="div_messages">
                 </div>
-
             </div>
         </div>
 
-        {% if survey.creator.username == request.user.username and not old %}
-        <a href="{% url 'survey_edit' %}?survey={{survey.url}}"><input type="button" value="Edit"></a>
-        {% endif %}
 
 
+        <br>
 
     </div>
     <div class="container" style="color: white;">
