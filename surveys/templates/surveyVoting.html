@@ -22,23 +22,24 @@
         {% if notPassed %}
         <form name="form" method="POST" id="form-main">
             {% csrf_token %}
-
             {% if survey.creator != None %}
             <div class="hi">
                 <label>Creator: </label>
                 <a href="{% url 'user_info' %}?user={{ survey.creator.username }}">{{survey.creator.username}}</a>
-                {% else %}
-                <label>Creator was deleted</label>
-                {% endif %}
-                {% if survey.creator.username == request.user.username %}
-                {% if survey.isLocked %}
-                <input id="lock_btn" type="submit" value="Unlock" class="btn">
-                {% else %}
-                <input id="lock_btn" type="submit" value="Lock" class="btn">
-                {% endif %}
-                {% endif %}
-                <br>
             </div>
+            {% else %}
+            <label>Creator was deleted</label>
+            {% endif %}
+
+            {% if survey.creator.username == request.user.username %}
+            {% if survey.isLocked %}
+            <input id="lock_btn" type="submit" value="Unlock" class="btn">
+            {% else %}
+            <input id="lock_btn" type="submit" value="Lock" class="btn">
+            {% endif %}
+            {% endif %}
+            <br>
+
 
             <div class="container" style="color: white;">
                 <div class="main">
@@ -78,8 +79,13 @@
 
 
         <br>
-        <form name="form" method="POST" id="form-lock">
+        {% if survey.creator != None %}
 
+        <div class="hi">
+            <label>Creator: </label>
+            <a href="{% url 'user_info' %}?user={{ survey.creator.username }}">{{survey.creator.username}}</a>
+        </div>
+        <form name="form" method="POST" id="form-lock">
             {% csrf_token %}
             {% if survey.creator.username == request.user.username %}
             {% if survey.isLocked %}
@@ -93,16 +99,8 @@
         <br>
         <div class="container" style="color: white;">
             <div class="main">
-                {% if survey.creator != None %}
-
-                <div class="hi">
-                    <label>Creator: </label>
-                    <a href="{% url 'user_info' %}?user={{ survey.creator.username }}">{{survey.creator.username}}</a>
-                </div>
-
-
                 {% else %}
-                <div >
+                <div>
                     <h6 class="hi">Creator was deleted</h6>
                     <br>
                     {% endif %}
