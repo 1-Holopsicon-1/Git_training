@@ -1,0 +1,46 @@
+.navbar-dark {
+    background-color: #2E8BC0;
+    text-align: center;
+}
+
+.name {
+    text-align: center;
+    padding-right: 4rem;
+}
+
+.nav-item {
+    text-align: center;
+    background-color: #145DA0;
+    border-radius: 20px;
+    margin: 0.5rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+
+.container {
+    margin: 0px;
+    width: auto;
+    margin-left: auto;
+}
+
+.row {
+    font-size: 2rem;
+    margin-top: 10px;
+    margin-right: 3rem;
+}
+
+.name {
+    margin-left: 1rem;
+    color: white;
+}
+
+button {
+    border-radius: 10px;
+    color: white;
+    background-color: #145DA0;
+}
+
+a {
+    color: #ffffff !important;
+    text-decoration: none
+}

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>Permission Denied</h1>
+{% if code == 0 %}
+<h4>You do not have enough rights to enter this page</h4>
+{% elif code == 1 %}
+<h4>Your access was temporary limited to that page (until {{ blockEnd|date:'H:i d-m-Y' }} UTC)</h4>
+{% elif code == 2 %}
+<h4>Your account access was temporary limited (until {{ blockEnd|date:'H:i d-m-Y' }} UTC)</h4>
+{% elif code == 3 %}
+<h4>Your account access was permanently limited</h4>
+{% endif %}
+<a href="{% url 'main' %}"><button>Return to main page</button></a>
+</body>
+</html>

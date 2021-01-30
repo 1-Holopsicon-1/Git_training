@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"
+        integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/comments.css' %}" />
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/menu_style.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/vote_surv.css' %}" />
+</head>
+
+<body>
+    {% include 'menu.html' %}
+    <div>
+        {% if notPassed %}
+        <form name="form" method="POST" id="form-main">
+            {% csrf_token %}
+
+            {% if survey.creator != None %}
+            <div class="hi">
+                <label>Creator: </label>
+                <a href="{% url 'user_info' %}?user={{ survey.creator.username }}">{{survey.creator.username}}</a>
+                {% else %}
+                <label>Creator was deleted</label>
+                {% endif %}
+                {% if survey.creator.username == request.user.username %}
+                {% if survey.isLocked %}
+                <input id="lock_btn" type="submit" value="Unlock" class="btn">
+                {% else %}
+                <input id="lock_btn" type="submit" value="Lock" class="btn">
+                {% endif %}
+                {% endif %}
+                <br>
+            </div>
+
+            <div class="container" style="color: white;">
+                <div class="main">
+                    <div class="row">
+                        <div class=" frame">
+                            <div class="info">
+                                <label class="block" style="text-align: center;">{{survey.title}}</label>
+                                <br>
+                                <label class="block" style="text-align: center;">{{survey.description}}</label>
+                                {% for question, answer_group, index in answers %}
+                                <div class="que" style="margin-bottom: 1rem;">
+                                    <label style="margin-bottom:0% ; margin-top: 1rem;">{{question.text}}</label>
+                                    <br>
+                                    {% for answer in answer_group %}
+                                    {% if question.multipleChoice %}
+                                    <input name="answers_inp{{index}}" type="checkbox"
+                                        id="answer_{{index}}_{{answer.text}}" value="{{answer.text}}" oninput="check()">
+                                    {% else %}
+                                    <input name="answers_inp{{index}}" type="radio"
+                                        id="answer_{{index}}_{{answer.text}}" value="{{answer.text}}" oninput="check()">
+                                    {% endif %}
+                                    <label>{{ answer.text }}</label>
+                                    <br>
+                                    {% endfor %}
+                                </div>
+                                {% endfor %}
+
+                                <input id="vote_btn" type="submit" value="Vote" disabled>
+                            </div>
+                        </div>
+                        <br>
+                    </div>
+                </div>
+            </div>
+        </form>
+        {% else %}
+
+
+        <br>
+        <form name="form" method="POST" id="form-lock">
+
+            {% csrf_token %}
+            {% if survey.creator.username == request.user.username %}
+            {% if survey.isLocked %}
+            <input id="lock_btn" type="submit" value="Unlock" class="btn">
+            {% else %}
+            <input id="lock_btn" type="submit" value="Lock" class="btn">
+            {% endif %}
+            {% endif %}
+        </form>
+
+        <br>
+        <div class="container" style="color: white;">
+            <div class="main">
+                {% if survey.creator != None %}
+
+                <div class="hi">
+                    <label>Creator: </label>
+                    <a href="{% url 'user_info' %}?user={{ survey.creator.username }}">{{survey.creator.username}}</a>
+                </div>
+
+
+                {% else %}
+                <div >
+                    <h6 class="hi">Creator was deleted</h6>
+                    <br>
+                    {% endif %}
+                </div>
+                <div class="row">
+                    <div class=" frame">
+                        <div class="info col-lg-auto">
+                            <label class="block" style="text-align: center;">{{survey.title}}</label>
+                            <br>
+                            <label class="block">{{survey.description}}</label>
+                            <br>
+                            {% for question, answer_group in answers %}
+                            <p></p>
+                            <div class="que">
+                                <h4 style="margin-bottom:0% ; margin-top: 4rem;"><label>{{question.text}}</label></h4>
+                                <br>
+                                {% for text, count, percentage, answered in answer_group %}
+                                {% if answered %}
+                                <label style="font-weight: bold;">{{ text }} {{ count }} {{ percentage }}</label>
+                                {% else %}
+                                <label>{{ text }} {{ count }} {{ percentage }}</label>
+                                {% endif %}
+                                <br>
+                                {% endfor %}
+                            </div>
+                            {% endfor %}
+
+                            {% endif %}
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="container">
+            {% if survey.creator.username == request.user.username and not old %}
+            <a href="{% url 'survey_edit' %}?survey={{survey.url}}"><input type="button" value="Edit"></a>
+            {% endif %}
+            <div class="row" style="display: block; float: left; justify-content: left;">
+                <form id="form-rating" method="POST">
+                    {% csrf_token %}
+                    {% if rated == 1 %}
+                    <input class="btn_l btn" id="like_btn" type="submit" value="Like ({{ survey.upped.count }})"
+                        style="background-color: rgb(50, 255, 50);">
+                    {% else %}
+                    <input class="btn_l btn" id="like_btn" type="submit" value="Like ({{ survey.upped.count }})"
+                        style="background-color: #2E8BC0; ">
+                    {% endif %}
+
+
+                    {% if rated == -1 %}
+                    <input class="btn_l btn" id="dislike_btn" type="submit" value="Dislike ({{ survey.downed.count }})"
+                        style="background-color: rgb(255, 50, 50);">
+                    {% else %}
+                    <input class="btn_l btn" id="dislike_btn" type="submit" value="Dislike ({{ survey.downed.count }})"
+                        style="background-color: #2E8BC0; ">
+                    {% endif %}
+                </form>
+                <p></p>
+                <div id="div_messages">
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+
+
+
+    <br>
+
+    </div>
+
+    <div class="container" style="color: white;">
+        <div class="main">
+            <div class="row">
+                <div class=" frame">
+                    <div class="info col-lg-auto">
+                        <form id="form-comments" action="POST">
+                            {% csrf_token %}
+
+                            <h4>Comments</h4>
+                            <div>
+                                {% for comment, childComments in comments %}
+                                <div class="commentBody">
+                                    <a
+                                        href="{% url 'user_info' %}?user={{ comment.user.username }}">{{comment.user.username}}</a>
+                                    <label>{{ comment.creationTime|date:"H:i d.m.Y" }}</label>
+                                    <input id="commentReplyBtn_{{comment.id}}" class="commentReply" type="button"
+                                        value="Reply"
+                                        onclick="createReplyBox({{ comment.id }}, {{ comment.id }}, `{% url 'user_info' %}?user={{ comment.user.username }}`, `{{ comment.user.username }}`, `{{ comment.creationTime|date:'H:i d.m.Y' }}`)">
+                                    <br>
+                                    <label>{{ comment.text }}</label>
+                                </div>
+
+                                {% for comment_, shortParentText in childComments %}
+                                <p></p>
+                                <div class="commentBody commentBodyMargin">
+                                    <a
+                                        href="{% url 'user_info' %}?user={{ comment_.user.username }}">{{comment_.user.username}}</a>
+                                    <label>{{ comment_.creationTime|date:"H:i d.m.Y" }}</label>
+                                    <label style="color: dimgray;">in reply to</label>
+                                    <div class="commentLinkRef">
+                                        <div class="commentReference">
+                                            <div class="commentRefBody">
+                                                <div class="commentRefCreation">
+                                                    <a
+                                                        href="{% url 'user_info' %}?user={{ comment_.parentComment.user.username }}">{{comment_.parentComment.user.username}}</a>
+                                                    <label>{{ comment_.parentComment.creationTime|date:"H:i d.m.Y" }}</label>
+                                                </div>
+                                                <div class="commentRefText">
+                                                    <label>{{ shortParentText }}</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <label class="commentLink">{{ comment_.parentComment.user.username }}</label>
+                                    </div>
+                                    <input id="commentReplyBtn_{{comment_.id}}" class="commentReply" type="button"
+                                        value="Reply"
+                                        onclick="createReplyBox({{ comment.id }}, {{ comment_.id }}, `{% url 'user_info' %}?user={{ comment_.user.username }}`, `{{ comment_.user.username }}`, `{{ comment_.creationTime|date:'H:i d.m.Y' }}`)">
+                                    <br>
+                                    <label>{{ comment_.text }}</label>
+                                </div>
+                                {% endfor %}
+                                <section id="commentReplySection_{{comment.id}}" style="margin-left: 50px;">
+                                    <br>
+                                </section>
+                                {% endfor %}
+                                <textarea id="commentTxt" rows=2 cols=50 style="resize: none;"
+                                    oninput="updateSendBtn(this, 'commentSend')"></textarea>
+                                <input id="commentSend" type="button" value="Send" disabled
+                                    onclick="event.preventDefault();sendComment(-1, commentTxt);">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{% static 'js/surveyHandler.js' %}"></script>
+    <script src="{% static 'js/surveyVotingAjax.js' %}"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/menu_style.css' %}" />
+
+    <title>Title</title>
+</head>
+
+<body>
+    {% include 'menu.html' with auth_state=2 %}
+    <div class="container"  style="color: white;">
+        <div class="row" >
+            <div class="login-window" style="width: auto;">
+                <h3 style="text-align: center; font-size: larger; padding-bottom: 1rem;">Login</h3>
+                <form method="POST" action="" class="" >
+                    {% csrf_token %}
+                    <div class="form-froup col-lg-auto">
+                        <label for="inputName" style="padding-right: 0.5rem;">
+                            Username
+                        </label>
+                        <input type="text" name="username" class="form-control" id="inputName" 
+                            placeholder="Username"  required>
+                    </div>
+
+                    <div class="form-froup col-lg-auto">
+                        <label for="inputPass" style="padding-right: 1rem;">
+                            Password
+                        </label>
+                        <input type="password" name="password" class="form-control" id="inputPass"
+                            placeholder="Password" required>
+                    </div>
+                    <div style="color: crimson;">
+                        {% for message in messages %}
+                        {{ message }}
+                        {% endfor %}
+                    </div>
+                    
+
+                    <button type="submit" class="btn btn-primary" name="Sign In" value="Sign In">Submit</button>
+                </form>
+                <div class="extended_log" >
+                    <div style="display: inline; float: left;"> Not registered yet? <a href="{% url 'user_register' %}" class = "urls_wind">Sign up</a></div>
+                    <br><div >Forgot your password? <a href="{% url 'user_restore' %}" class = "urls_wind" >Restore it</a></div>
+                </div>
+              
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+        crossorigin="anonymous"></script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,60 @@
+.commentLinkRef {
+    position: relative;
+    display: inline-block;
+}
+
+.commentReference {
+    display: inline-block;
+    position: absolute;
+    pointer-events: none;
+    left: 50%;
+    min-width: 0px;
+    bottom: 20px;
+    max-width: 500px;
+    opacity: 0;
+    z-index: 1;
+
+    transition: opacity 300ms ease-out;
+}
+
+.commentRefBody{
+    background-color: #145DA0;
+    border-color: black;
+    border-width: 1px;
+    border-radius: 5px;
+    border-style: solid;
+    overflow: hidden;
+    white-space: nowrap;
+    position: relative;
+    display: inline-block;
+    left: -50%;
+    max-width: 500px;
+}
+
+.commentRefText {
+    display: block;
+    white-space: normal;
+    max-width: 500px;
+}
+
+.commentLinkRef .commentLink {
+    color: #A9A9A9;
+}
+
+.commentLinkRef:hover .commentReference{
+    opacity: 1;
+}
+
+.commentReply{
+    opacity: 0;
+
+    transition: opacity 300ms ease-out;
+}
+
+.commentBodyMargin{
+    margin-left: 50px;
+}
+
+.commentBody:hover .commentReply{
+    opacity: 1;
+}
