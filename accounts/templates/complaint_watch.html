@@ -20,71 +20,82 @@
 </head>
 
 <body>
-    <form id="form-main" method="POST">
-        {% csrf_token %}
-
-        <label>User: {{ complaint.user }}</label><br>
-        <label>Author: {{ complaint.author }}</label><br>
-        <label>Title</label>
-        <textarea id="title" name="title" rows="1" cols="50" style="resize: none;"
-            disabled>{{ complaint.title }}</textarea>
-        <br>
-        <label>Description</label>
-        <textarea id="description" name="description" rows="4" cols="50" style="resize: none;"
-            disabled>{{ complaint.description }}</textarea>
-        <br>
-        <label>Verdict: </label>
-        <div class="dropdown">
-            <input type="text" id="verdict" value="--" disabled>
-            <div class="dropdown-content">
-                <label id="none" onclick="transfer(this, 'verdict')">--</label>
-                <label id="right-limit" onclick="transfer(this, 'verdict')">Temporary right limit</label>
-                <label id="temp-ban" onclick="transfer(this, 'verdict')">Temporary ban</label>
-                <label id="perm-ban" onclick="transfer(this, 'verdict')">Permanent ban</label>
-            </div>
-        </div>
-        <div id="time-choice" hidden>
-            <br>
-            <div class="alignment">
-                <label>For some time</label>
-                <div class="switch">
-                    <input id="switch-input" type="checkbox" hidden onchange="onTimeTypeChange(this.checked)">
-                    <label for="switch-input">Selection ::after</label>
+    {% include 'menu.html' %}
+    <div class="container" style="color: white;">
+        <div class="row">
+            <form id="form-main" method="POST">
+                {% csrf_token %}
+                <div class="form-froup col-lg-auto">
+                    <label>User: {{ complaint.user }}</label><br>
+                    <label>Author: {{ complaint.author }}</label><br>
                 </div>
-                <label>Until some time</label>
-            </div>
+                <div class="form-froup col-lg-auto">
+                    <label>Title</label>
+                    <textarea id="title" name="title" rows="1" cols="50" style="resize: none;"
+                        disabled>{{ complaint.title }}</textarea>
+                </div><br>
+                <div class="form-froup col-lg-auto">
+                    <label>Description</label>
+                    <textarea id="description" name="description" rows="4" cols="50" style="resize: none;"
+                        disabled>{{ complaint.description }}</textarea>
+                </div>
 
-            <div id="until-time" hidden>
-                <input id="until-time-inp" type="date" value="" onchange="
-                if (document.getElementById('accept').hasAttribute('disabled'))
-                document.getElementById('accept').removeAttribute('disabled');">
-            </div>
-            <div id="for-time">
-                <div class="dropdown">
-                    <input type="text" id="for-time-inp" value="--" disabled>
-                    <div class="dropdown-content">
-                        <label id="30m" onclick="transfer(this, 'for-time-inp')">30 minutes</label>
-                        <label id="1h" onclick="transfer(this, 'for-time-inp')">1 hour</label>
-                        <label id="2h" onclick="transfer(this, 'for-time-inp')">2 hours</label>
-                        <label id="4h" onclick="transfer(this, 'for-time-inp')">4 hours</label>
-                        <label id="12h" onclick="transfer(this, 'for-time-inp')">12 hours</label>
-                        <label id="1d" onclick="transfer(this, 'for-time-inp')">1 day</label>
-                        <label id="2d" onclick="transfer(this, 'for-time-inp')">2 days</label>
-                        <label id="5d" onclick="transfer(this, 'for-time-inp')">5 days</label>
-                        <label id="10d" onclick="transfer(this, 'for-time-inp')">10 days</label>
-                        <label id="30d" onclick="transfer(this, 'for-time-inp')">30 days</label>
+                <br>
+                <div class="form-froup col-lg-auto">
+                    <label>Verdict: </label>
+                    <div class="dropdown">
+                        <input type="text" id="verdict" value="--" disabled>
+                        <div class="dropdown-content">
+                            <label id="none" onclick="transfer(this, 'verdict')">--</label>
+                            <label id="right-limit" onclick="transfer(this, 'verdict')">Temporary right limit</label>
+                            <label id="temp-ban" onclick="transfer(this, 'verdict')">Temporary ban</label>
+                            <label id="perm-ban" onclick="transfer(this, 'verdict')">Permanent ban</label>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        <br>
-        <input id="accept" type="submit" value="Accept" disabled>
-        <input id="reject" type="submit" value="Reject">
-        <p></p>
-        <div id="div_messages">
-        </div>
-    </form>
+                <div id="time-choice" hidden>
+                    <br>
+                    <div class="alignment">
+                        <label>For some time</label>
+                        <div class="switch">
+                            <input id="switch-input" type="checkbox" hidden onchange="onTimeTypeChange(this.checked)">
+                            <label for="switch-input">Selection ::after</label>
+                        </div>
+                        <label>Until some time</label>
+                    </div>
 
+                    <div id="until-time" hidden>
+                        <input id="until-time-inp" type="date" value="" onchange="
+                if (document.getElementById('accept').hasAttribute('disabled'))
+                document.getElementById('accept').removeAttribute('disabled');">
+                    </div>
+                    <div id="for-time">
+                        <div class="dropdown">
+                            <input type="text" id="for-time-inp" value="--" disabled>
+                            <div class="dropdown-content">
+                                <label id="30m" onclick="transfer(this, 'for-time-inp')">30 minutes</label>
+                                <label id="1h" onclick="transfer(this, 'for-time-inp')">1 hour</label>
+                                <label id="2h" onclick="transfer(this, 'for-time-inp')">2 hours</label>
+                                <label id="4h" onclick="transfer(this, 'for-time-inp')">4 hours</label>
+                                <label id="12h" onclick="transfer(this, 'for-time-inp')">12 hours</label>
+                                <label id="1d" onclick="transfer(this, 'for-time-inp')">1 day</label>
+                                <label id="2d" onclick="transfer(this, 'for-time-inp')">2 days</label>
+                                <label id="5d" onclick="transfer(this, 'for-time-inp')">5 days</label>
+                                <label id="10d" onclick="transfer(this, 'for-time-inp')">10 days</label>
+                                <label id="30d" onclick="transfer(this, 'for-time-inp')">30 days</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <input id="accept" type="submit" value="Accept" disabled>
+                <input id="reject" type="submit" value="Reject">
+                <p></p>
+                <div id="div_messages">
+                </div>
+            </form>
+        </div>
+    </div>
     <script>
         function transfer(component, to) {
             var choice = document.getElementById(to);
@@ -135,7 +146,7 @@
     </script>
     <script src="{% static 'js/complainWatchAjax.js' %}?newversion"></script>
 
-    {% include 'menu.html' %}
+
 
 </body>
 

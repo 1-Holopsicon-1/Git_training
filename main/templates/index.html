@@ -15,26 +15,28 @@
 <body>
     {% include 'menu.html' %}
     <div style="display: flex; margin-top: 1rem;">
-        <h4  class="hi">Top surveys</h4><br>    
+        <h4 class="hi">Top surveys</h4><br>
     </div>
-    
+
     <div class="container">
         <table class="table table-light table-striped">
             <thead>
-              <tr>
-                <th scope="col">Title</th>
-                <th scope="col">Rating</th>
-                <th scope="col">Participants</th>
-              </tr>
+                <tr>
+                    <th scope="col">Title</th>
+                    <th scope="col">Rating</th>
+                    <th scope="col">Participants</th>
+                </tr>
             </thead>
             <tbody>
                 {% for survey, participants in topSurveys %}
                 <tr>
-                  <th scope="row" style="color: black !important; "><a href="{% url 'survey_pass'%}?survey={{survey.url}}" style="color: black;">{{survey.title}}</th>
-                  <td>{{survey.rating}}</td>
-                  <td>{{participants}}</td>
-                </tr>   
-                {% endfor %}   
+                    <th scope="row" style="color: black !important; "><a
+                            href="{% url 'survey_pass'%}?survey={{survey.url}}" style="color: black;">{{survey.title}}
+                    </th>
+                    <td>{{survey.rating}}</td>
+                    <td>{{participants}}</td>
+                </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>
